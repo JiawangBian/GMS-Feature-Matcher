@@ -1,7 +1,9 @@
 #pragma once
 #include "stdafx.h"
 
-#define ThreshFactor 2.71828
+#define LocalTheshold 0			// Threshold has two ways : global and local
+#define LocalThreshFactor 2.71828	// factor for local threshold
+#define GlobalTreshFactor 6			// factor for global threshold
 
 class GMS
 {
@@ -131,7 +133,7 @@ void GMS::getScoreAndThreshold(int idx_grid, double &score, double &thresh) {
 		thresh += kpts_num_of_each_region[pos];
 	}
 	
-	thresh = sqrt(thresh) * ThreshFactor;
+	thresh = sqrt(thresh) * LocalThreshFactor;
 }
 
 void GMS::run(int type) {
@@ -153,17 +155,23 @@ void GMS::run(int type) {
 		motion_number[left_idx][right_idx] += 1;
 	}
 	//	Mark IdxToRightRegion
+	int numGrid = 0;
 	for (int i = 0; i < number1; i++)
 	{
 		if (kpts_num_of_each_region[i] <= 0) continue;
 		pair<int, int> max_region(0, 0);
 		for (auto &p : motion_number[i]) { if (p.second > max_region.second) max_region = p; }
 		IdxToRightRegion[i] = max_region.first;
+		numGrid++;
 	}
 
+	double localthreshold = 0;
+	double globalthreshold = sqrt(matches.size() / numGrid) * GlobalTreshFactor;
+	if (!LocalTheshold){ ACCEPT_SCORE = globalthreshold; }
 	for (int i = 0; i < number1; i++) {
 		if (kpts_num_of_each_region[i] <= 0)	continue;
-		getScoreAndThreshold(i, scores[i], ACCEPT_SCORE);
+		getScoreAndThreshold(i, scores[i], localthreshold);
+		if (LocalTheshold){ ACCEPT_SCORE = localthreshold; }
 		if (scores[i] < ACCEPT_SCORE) { IdxToRightRegion[i] = -2; }
 	}
 
