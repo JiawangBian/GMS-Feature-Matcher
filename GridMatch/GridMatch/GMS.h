@@ -1,9 +1,8 @@
 #pragma once
 #include "stdafx.h"
 
-#define LocalTheshold 0			// Threshold has two ways : global and local
-#define LocalThreshFactor 2.71828	// factor for local threshold
-#define GlobalTreshFactor 6			// factor for global threshold
+#define LocalTheshold 1			// Threshold has two ways : global and local
+#define TreshFactor 6			// factor for global threshold
 
 class GMS
 {
@@ -15,7 +14,7 @@ private:
 	vector<map<int, int> > motion_number;
 	Size sz1, sz2;		// size for left and right image
 
-	// parameter
+						// parameter
 	double ACCEPT_SCORE;
 	int number1, number2;
 
@@ -49,7 +48,7 @@ public:
 
 	// get socre of a grid
 	void getScoreAndThreshold(int idx_grid, double &score, double &thresh);
-	
+
 	// get inlier
 	void run(int type);
 
@@ -83,7 +82,7 @@ private:
 	int getRightRegion(DMatch &match, int type) {
 		Point2i pt = kpt2[match.trainIdx].pt;
 
-		switch (type){
+		switch (type) {
 		case 2:	pt.x += stepX2 / 2; break;
 		case 3: pt.y += stepY2 / 2; break;
 		case 4:
@@ -123,6 +122,7 @@ void GMS::getScoreAndThreshold(int idx_grid, double &score, double &thresh) {
 	// find neighbor
 	vector<int> posRegion = getNeighbor9(idx_grid, num1);
 	vector<int> motionRegion = getNeighbor9(IdxToRightRegion[idx_grid], num2);
+	int num = 0;
 	for (int j = 0; j < 9; j++)
 	{
 		int pos = posRegion[j];
@@ -131,9 +131,10 @@ void GMS::getScoreAndThreshold(int idx_grid, double &score, double &thresh) {
 		double positive_points = motion_number[pos][motionRegion[j]];
 		score += positive_points;
 		thresh += kpts_num_of_each_region[pos];
+		num++;
 	}
-	
-	thresh = sqrt(thresh) * LocalThreshFactor;
+
+	thresh = sqrt(thresh / num) * TreshFactor;
 }
 
 void GMS::run(int type) {
@@ -166,12 +167,12 @@ void GMS::run(int type) {
 	}
 
 	double localthreshold = 0;
-	double globalthreshold = sqrt(matches.size() / numGrid) * GlobalTreshFactor;
-	if (!LocalTheshold){ ACCEPT_SCORE = globalthreshold; }
+	double globalthreshold = sqrt(matches.size() / numGrid) * TreshFactor;
+	if (!LocalTheshold) { ACCEPT_SCORE = globalthreshold; }
 	for (int i = 0; i < number1; i++) {
 		if (kpts_num_of_each_region[i] <= 0)	continue;
 		getScoreAndThreshold(i, scores[i], localthreshold);
-		if (LocalTheshold){ ACCEPT_SCORE = localthreshold; }
+		if (LocalTheshold) { ACCEPT_SCORE = localthreshold; }
 		if (scores[i] < ACCEPT_SCORE) { IdxToRightRegion[i] = -2; }
 	}
 
