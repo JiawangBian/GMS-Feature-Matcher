@@ -69,7 +69,7 @@ DWORD WINAPI nn_match(LPVOID pM)
 	cuda::GpuMat gd2;
 	Ptr<cuda::DescriptorMatcher> matcher = cuda::DescriptorMatcher::createBFMatcher(NORM_HAMMING);
 #else
-	Ptr<DescriptorMatcher> matcher = BFMatcher::create("BruteForce-Hamming");
+	Ptr<DescriptorMatcher> matcher = BFMatcher::create(NORM_HAMMING);
 #endif
 
 	while (param->end != 1) {

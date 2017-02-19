@@ -4,6 +4,20 @@
 #define LocalTheshold 1			// Threshold has two ways : global and local
 #define TreshFactor 6			// factor for global threshold
 
+int RotationPatterns[8][9] = {
+	1,2,3,4,5,6,7,8,9,
+	4,1,2,7,5,3,8,9,6,
+	7,4,1,8,5,2,9,6,3,
+	8,7,4,9,5,1,6,3,2,
+	9,8,7,6,5,4,3,2,1,
+	6,9,8,3,5,7,2,1,4,
+	3,6,9,2,5,8,1,4,7,
+	2,3,6,1,5,9,4,7,8
+};
+
+double ScaleRatio[5] = { 1.0 / 2, 1.0 / sqrt(2.0), 1.0, sqrt(2.0), 2 };
+
+
 class GMS
 {
 private:
@@ -13,8 +27,9 @@ private:
 	vector<int> IdxToRightRegion, kpts_num_of_each_region, IsInlier;
 	vector<map<int, int> > motion_number;
 	Size sz1, sz2;		// size for left and right image
+	
 
-						// parameter
+	// parameter
 	double ACCEPT_SCORE;
 	int number1, number2;
 
@@ -47,12 +62,12 @@ public:
 	}
 
 	// get socre of a grid
-	void getScoreAndThreshold(int idx_grid, double &score, double &thresh);
+	void getScoreAndThreshold(int idx_grid, int rp, double &score, double &thresh);
 
 	// get inlier
-	void run(int type);
+	void run(int type, int rp);
 
-	vector<DMatch> getInlier();
+	vector<DMatch> getInlier(int withrotation = 0);
 	size_t getInlierSize() { return inlier.size(); }
 
 private:
@@ -115,7 +130,7 @@ private:
 	}
 };
 
-void GMS::getScoreAndThreshold(int idx_grid, double &score, double &thresh) {
+void GMS::getScoreAndThreshold(int idx_grid, int rp, double &score, double &thresh) {
 	score = 0.0;
 	thresh = 0.0;
 
@@ -128,7 +143,9 @@ void GMS::getScoreAndThreshold(int idx_grid, double &score, double &thresh) {
 		int pos = posRegion[j];
 		if (pos < 0 || pos >= number1 || kpts_num_of_each_region[pos] <= 0) continue;
 
-		double positive_points = motion_number[pos][motionRegion[j]];
+		// motion predeict with rotation
+		int k = RotationPatterns[rp][j] - 1;
+		double positive_points = motion_number[pos][motionRegion[k]];
 		score += positive_points;
 		thresh += kpts_num_of_each_region[pos];
 		num++;
@@ -137,7 +154,7 @@ void GMS::getScoreAndThreshold(int idx_grid, double &score, double &thresh) {
 	thresh = sqrt(thresh / num) * TreshFactor;
 }
 
-void GMS::run(int type) {
+void GMS::run(int type, int rp) {
 	//initialize
 	motion_number.clear();
 	motion_number.resize(number1);
@@ -171,7 +188,7 @@ void GMS::run(int type) {
 	if (!LocalTheshold) { ACCEPT_SCORE = globalthreshold; }
 	for (int i = 0; i < number1; i++) {
 		if (kpts_num_of_each_region[i] <= 0)	continue;
-		getScoreAndThreshold(i, scores[i], localthreshold);
+		getScoreAndThreshold(i, rp, scores[i], localthreshold);
 		if (LocalTheshold) { ACCEPT_SCORE = localthreshold; }
 		if (scores[i] < ACCEPT_SCORE) { IdxToRightRegion[i] = -2; }
 	}
@@ -188,10 +205,52 @@ void GMS::run(int type) {
 	}
 }
 
-vector<DMatch> GMS::getInlier() {
-	for (int i = 1; i <= 4; i++)
+vector<DMatch> GMS::getInlier(int withRS) {
+	
+	if (withRS == 0) {
+		for (int i = 1; i <= 4; i++)
+		{
+			run(i, 0);
+		}
+	}
+	else
 	{
-		run(i);
+		int maxInlier = 0;
+		vector<int> SavedInliers;
+
+		int curInlier = 0;
+		IsInlier.clear();
+
+		for (int s = 0; s < 5; s++)
+		{
+			int left = 20; int right = static_cast<int>(left * ScaleRatio[s]);
+			setParameter(left, right);
+
+			for (int j = 0; j < 8; j++)
+			{
+				for (int i = 1; i <= 4; i++)
+				{
+					run(i, j);
+				}
+
+				// count
+				for (int i = 0; i < matches.size(); i++)
+				{
+					if (IsInlier[i] == 1) {
+						curInlier++;
+					}
+				}
+				if (curInlier > maxInlier)
+				{
+					maxInlier = curInlier;
+					SavedInliers.clear();
+					SavedInliers = IsInlier;
+				}
+			}
+		}
+
+		IsInlier.clear();
+		IsInlier = SavedInliers;
 	}
 
 	inlier.reserve(matches.size());

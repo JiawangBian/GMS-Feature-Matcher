@@ -29,11 +29,11 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GMSmatcher\GMSmatcher.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="GMSmatcher\stdafx.cpp">
       <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GMSmatcher\GMSmatcher.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -8,11 +8,17 @@
 void GridMatch(Mat &img1, Mat &img2);
 
 void runImagePair(){
-	Mat img1 = imread("./data/nn_left.jpg");
-	Mat img2 = imread("./data/nn_right.jpg");
+	//Mat img1 = imread("./data/nn_left.jpg");
+	//Mat img2 = imread("./data/nn_right.jpg");
 
-	imresize(img1, 480);
-	imresize(img2, 480);
+	Mat img1 = imread("./data/object0033.view04.png");
+	Mat img2 = imread("./data/object0033.view01.png");
+	
+//	Mat img1 = imread("./data/img1.pgm");
+//	Mat img2 = imread("./data/img3.pgm");
+
+//	imresize(img1, 480);
+//	imresize(img2, 480);
 
 	GridMatch(img1, img2);
 }
@@ -60,7 +66,7 @@ void GridMatch(Mat &img1, Mat &img2){
 	GMS gms;
 	gms.init(img1.size(), img2.size(), kp1, kp2, matches_all);
 	gms.setParameter(20, 20);
-	matches_grid = gms.getInlier();
+	matches_grid = gms.getInlier(1);
 
 	cout << "Get total " << matches_grid.size() << " matches." << endl;
 
