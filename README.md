@@ -2,6 +2,7 @@
 Feature Matching System (ORB + GMS)
 
 Requirement:
+
 	1.OpenCV 3.0 or later (for IO and ORB features, necessary)
 
 	2.cudafeatures2d module(for gpu nearest neighbor, optional)
@@ -13,6 +14,7 @@ How to run:
 	(Note:	Please use gpu match when you run video demo.)
 	
 Tune Parameters:
+
 	In Main.cpp
 		1.#define USE_GPU" will need gpu cudafeatures2d module for nearest neighbor match, 
 			using cpu match by commenting it.
