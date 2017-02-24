@@ -18,21 +18,15 @@
     <ClInclude Include="GMSmatcher\GMS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GMSmatcher\stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GMSmatcher\targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GMSmatcher\VideoMatch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GMSmatcher\Header.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GMSmatcher\stdafx.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GMSmatcher\GMSmatcher.cpp">
+    <ClCompile Include="GMSmatcher\demo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

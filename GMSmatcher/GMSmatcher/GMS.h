@@ -1,5 +1,5 @@
 #pragma once
-#include "stdafx.h"
+#include "Header.h"
 
 #define LocalTheshold 1			// Threshold has two ways : global and local
 #define TreshFactor 6			// factor for global threshold
@@ -16,7 +16,6 @@ int RotationPatterns[8][9] = {
 };
 
 double ScaleRatio[5] = { 1.0 / 2, 1.0 / sqrt(2.0), 1.0, sqrt(2.0), 2 };
-
 
 class GMS
 {

@@ -1,24 +1,19 @@
 // GridMatch.cpp : Defines the entry point for the console application.
 
 //#define USE_GPU 
-#include "stdafx.h"
+
+#include "Header.h"
 #include "GMS.h"
 #include "VideoMatch.h"
 
 void GridMatch(Mat &img1, Mat &img2);
 
 void runImagePair(){
-	//Mat img1 = imread("./data/nn_left.jpg");
-	//Mat img2 = imread("./data/nn_right.jpg");
+	Mat img1 = imread("./data/nn_left.jpg");
+	Mat img2 = imread("./data/nn_right.jpg");
 
-	Mat img1 = imread("./data/object0033.view04.png");
-	Mat img2 = imread("./data/object0033.view01.png");
-	
-//	Mat img1 = imread("./data/img1.pgm");
-//	Mat img2 = imread("./data/img3.pgm");
-
-//	imresize(img1, 480);
-//	imresize(img2, 480);
+	imresize(img1, 480);
+	imresize(img2, 480);
 
 	GridMatch(img1, img2);
 }

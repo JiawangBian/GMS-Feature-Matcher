@@ -1,5 +1,5 @@
 #pragma once
-#include "stdafx.h"
+#include "Header.h"
 #include "GMS.h"
 
 #define BUFFLE_LENGTH 10

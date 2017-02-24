@@ -144,13 +144,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="GMSmatcher\GMS.h" />
-    <ClInclude Include="GMSmatcher\stdafx.h" />
-    <ClInclude Include="GMSmatcher\targetver.h" />
+    <ClInclude Include="GMSmatcher\Header.h" />
     <ClInclude Include="GMSmatcher\VideoMatch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GMSmatcher\GMSmatcher.cpp" />
-    <ClCompile Include="GMSmatcher\stdafx.cpp" />
+    <ClCompile Include="GMSmatcher\demo.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
