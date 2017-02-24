@@ -2,7 +2,7 @@
 #include "Header.h"
 
 #define LocalTheshold 1			// Threshold has two ways : global and local
-#define TreshFactor 6			// factor for global threshold
+#define TreshFactor 6			// factor for calculating threshold
 
 int RotationPatterns[8][9] = {
 	1,2,3,4,5,6,7,8,9,
