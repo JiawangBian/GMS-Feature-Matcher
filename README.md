@@ -3,7 +3,7 @@ Feature Matching System (ORB + GMS)
 
 Publication 
 
-GMS: Grid-base Motion Statistics for Fast, Ultra-robust Feature correspondence, JW Bian, W Lin, Y Matsushita, SK Yeung, TD Nguyen, MM Cheng IEEE CVPR, 2017. [Project Page]
+GMS: Grid-base Motion Statistics for Fast, Ultra-robust Feature correspondence, JW Bian, W Lin, Y Matsushita, SK Yeung, TD Nguyen, MM Cheng IEEE CVPR, 2017.
 
 Requirement:
 
