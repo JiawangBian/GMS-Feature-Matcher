@@ -1,6 +1,10 @@
 # GMS-Feature-Matcher
 Feature Matching System (ORB + GMS)
 
+Publication 
+
+GMS: Grid-base Motion Statistics for Fast, Ultra-robust Feature correspondence, JW Bian, W Lin, Y Matsushita, SK Yeung, TD Nguyen, MM Cheng IEEE CVPR, 2017. [Project Page]
+
 Requirement:
 
 	1.OpenCV 3.0 or later (for IO and ORB features, necessary)
