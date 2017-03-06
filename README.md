@@ -9,10 +9,15 @@ Citation
 If you are using the code provided here in a publication, please cite our paper: 
 
 @inproceedings{cvpr2017gms,
+
   title={ {GMS}: Grid-base Motion Statistics for Fast, Ultra-robust Feature Correspondence},
+  
   author={JiaWang Bian and Daniel Lin and Yasuyuki Matsushita and Sai-Kit Yeung and Tan Dat Nguyen and Ming-Ming Cheng},
+  
   booktitle={IEEE CVPR},
+  
   year={2017},
+  
 }
 
 
