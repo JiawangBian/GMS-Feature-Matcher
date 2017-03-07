@@ -145,10 +145,12 @@
   <ItemGroup>
     <ClInclude Include="GMSmatcher\GMS.h" />
     <ClInclude Include="GMSmatcher\Header.h" />
+    <ClInclude Include="GMSmatcher\ORBextractor.h" />
     <ClInclude Include="GMSmatcher\VideoMatch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GMSmatcher\demo.cpp" />
+    <ClCompile Include="GMSmatcher\ORBextractor.cc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

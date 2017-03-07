@@ -24,9 +24,15 @@
     <ClInclude Include="GMSmatcher\Header.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GMSmatcher\ORBextractor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GMSmatcher\demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GMSmatcher\ORBextractor.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
