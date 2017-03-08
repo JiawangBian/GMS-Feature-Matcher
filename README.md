@@ -8,7 +8,7 @@ It has been demonstrated that incorporating smoothness constraints with feature 
 
 Citation
 
-If you are using the code provided here in a publication, please cite our paper: 
+If you are using the code provided here in a publication, please cite our paper[homepage](https://jwbian.net/gms): 
 
 ```cpp
 @inproceedings{cvpr2017gms,
