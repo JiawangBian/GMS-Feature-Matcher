@@ -44,7 +44,7 @@ void GridMatch(Mat &img1, Mat &img2){
 	Mat d1, d2;
 	vector<DMatch> matches_all, matches_grid;
 
-	Ptr<ORB> orb = ORB::create(100000);
+	Ptr<ORB> orb = ORB::create(10000);
 	orb->setFastThreshold(0);
 	orb->detectAndCompute(img1, Mat(), kp1, d1);
 	orb->detectAndCompute(img2, Mat(), kp2, d2);
