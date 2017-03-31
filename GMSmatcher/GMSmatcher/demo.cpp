@@ -5,7 +5,6 @@
 #include "Header.h"
 #include "GMS.h"
 #include "VideoMatch.h"
-#include "ORBextractor.h"
 
 void GridMatch(Mat &img1, Mat &img2);
 
@@ -48,10 +47,6 @@ void GridMatch(Mat &img1, Mat &img2){
 	orb->setFastThreshold(0);
 	orb->detectAndCompute(img1, Mat(), kp1, d1);
 	orb->detectAndCompute(img2, Mat(), kp2, d2);
-
-	//ORB_SLAM2::ORBextractor *pOrb = new ORB_SLAM2::ORBextractor(100000, 1.2, 8, 20, 0);
-	//(*pOrb)(img1, Mat(), kp1, d1);
-	//(*pOrb)(img2, Mat(), kp2, d2);
 
 #ifdef USE_GPU
 	GpuMat gd1(d1), gd2(d2);
