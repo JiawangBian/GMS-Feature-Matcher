@@ -35,14 +35,9 @@ private:
 public:
 	GMS() {};
 	~GMS() {};
-	GMS(Size &sz1_p, Size &sz2_p, vector<KeyPoint> &kpt1_p, vector<KeyPoint> &kpt2_p,
-		vector<DMatch> &matches_p)
-	{
-		init(sz1_p, sz2_p, kpt1_p, kpt2_p, matches_p);
-	}
 
 	// init variable
-	void init(Size &sz1_p, Size &sz2_p, vector<KeyPoint> &kpt1_p, vector<KeyPoint> &kpt2_p,
+	void init(Size sz1_p, Size sz2_p, vector<KeyPoint> &kpt1_p, vector<KeyPoint> &kpt2_p,
 		vector<DMatch> &matches_p)
 	{
 		sz1 = sz1_p;	sz2 = sz2_p;

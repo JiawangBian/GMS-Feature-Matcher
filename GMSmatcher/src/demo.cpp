@@ -4,13 +4,12 @@
 
 #include "Header.h"
 #include "GMS.h"
-#include "VideoMatch.h"
 
 void GridMatch(Mat &img1, Mat &img2);
 
 void runImagePair(){
-	Mat img1 = imread("./data/nn_left.jpg");
-	Mat img2 = imread("./data/nn_right.jpg");
+	Mat img1 = imread("../data/nn_left.jpg");
+	Mat img2 = imread("../data/nn_right.jpg");
 
 	imresize(img1, 480);
 	imresize(img2, 480);
@@ -18,13 +17,8 @@ void runImagePair(){
 	GridMatch(img1, img2);
 }
 
-void runVideo(){
-	string filename = "./data/chair.mp4";
-	testVideo(filename);
-}
 
-
-int _tmain(int argc, _TCHAR* argv[])
+int main()
 {
 #ifdef USE_GPU
 	int flag = cuda::getCudaEnabledDeviceCount();
@@ -32,7 +26,6 @@ int _tmain(int argc, _TCHAR* argv[])
 #endif // USE_GPU
 
 	runImagePair();
-//	runVideo();
 
 	return 0;
 }
