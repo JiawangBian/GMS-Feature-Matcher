@@ -2,13 +2,15 @@
 
 ![alt tag](http://mmcheng.net/wp-content/uploads/2017/03/dog_ours.jpg)
 
-GMS: Grid-based Motion Statistics for Fast, Ultra-robust Feature Correspondence JiaWang Bian, Daniel Lin, Yasuyuki Matsushita, Sai-Kit Yeung, Tan Dat Nguyen, Ming-Ming Cheng IEEE CVPR, 2017 [Project Page][pdf][C++][Video Demo]
-
 
 Abstract
 
 Incorporating smoothness constraints into feature matching is known to enable ultra-robust matching. However, such formulations are both complex and slow, making them unsuitable for video applications. This paper proposes GMS (Grid-based Motion Statistics), a simple means of encapsulating motion smoothness as the statistical likelihood of a certain number of matches in a region. GMS enables translation of high match numbers into high match quality. This provides a real-time, ultra-robust correspondence system. Evaluation on videos, with low textures, blurs and wide-baselines show GMS consistently out-performs other real-time matchers and can achieve parity with more sophisticated, much slower techniques.
 
+
+Paper
+
+GMS: Grid-based Motion Statistics for Fast, Ultra-robust Feature Correspondence JiaWang Bian, Daniel Lin, Yasuyuki Matsushita, Sai-Kit Yeung, Tan Dat Nguyen, Ming-Ming Cheng IEEE CVPR, 2017 [Project Page](http://jwbian.net/gms) [pdf](http://jwbian.net/Papers/GMS_CVPR17.pdf) [Code](https://github.com/JiawangBian/GMS-Feature-Matcher) [Video Demo](http://jwbian.net/Demo/gms_matching_demo.mp4)
 
 
 
@@ -17,6 +19,7 @@ Citation
 	If you use the code in your publication, please cite our paper.
 
 Environment:
+
 	The code can run on Windows, Linux, and Mac.
 
 Requirement:
