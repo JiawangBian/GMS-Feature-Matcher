@@ -1,4 +1,4 @@
-# GMS: Grid-base Motion Statistics for Fast, Ultra-robust Feature Correspondence
+# GMS: Grid-based Motion Statistics for Fast, Ultra-robust Feature Correspondence
 
 ![alt tag](http://mmcheng.net/wp-content/uploads/2017/03/dog_ours.jpg)
 
