@@ -9,7 +9,7 @@ Incorporating smoothness constraints into feature matching is known to enable ul
 
 Author
 
-[!JiaWang Bian](http://jwbian.net), WenY-Yan Lin, Yasuyuki Matsushita, Sai-Kit Yeung, Tan Dat Nguyen, Ming-Ming Cheng
+[JiaWang Bian](http://jwbian.net), WenY-Yan Lin, [Yasuyuki Matsushita](http://www-infobiz.ist.osaka-u.ac.jp/user/matsushita/index.html), [Sai-Kit Yeung](http://people.sutd.edu.sg/~saikit/), Tan Dat Nguyen, [Ming-Ming Cheng](http://mmcheng.net)
 
 
 Publication:
