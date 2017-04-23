@@ -19,9 +19,7 @@ Citation
 	
 Matching Demo
 	
-	[![IMAGE ALT TEXT HERE](http://jwbian.net/wp-content/uploads/2017/04/matching_demo_chair.png)](https://youtu.be/3SlBqspLbxI)
-	[![IMAGE ALT TEXT HERE](http://jwbian.net/wp-content/uploads/2017/04/matching_demo_tum.png)](https://youtu.be/tjMpgno6k5A)
-	[![IMAGE ALT TEXT HERE](http://jwbian.net/wp-content/uploads/2017/04/matching_demo_car.png)](https://youtu.be/TIVWTTQTkeI)
+[![IMAGE ALT TEXT HERE](http://jwbian.net/wp-content/uploads/2017/04/matching_demo_chair.png)](https://youtu.be/3SlBqspLbxI)[![IMAGE ALT TEXT HERE](http://jwbian.net/wp-content/uploads/2017/04/matching_demo_tum.png)](https://youtu.be/tjMpgno6k5A)[![IMAGE ALT TEXT HERE](http://jwbian.net/wp-content/uploads/2017/04/matching_demo_car.png)](https://youtu.be/TIVWTTQTkeI)
 
 Environment:
 
