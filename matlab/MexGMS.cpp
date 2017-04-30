@@ -1,12 +1,12 @@
 #include "mex.h"
-#include "GMS.h"
+#include "gms_matcher.h"
 
 /* The gateway function */
 void mexFunction(int nlhs, mxArray *plhs[],
 	int nrhs, const mxArray *prhs[])
 {
 	/* variable declarations here */
-	if(nrhs != 4) throw runtime_error("unknown stereo match method: ");
+	if(nrhs != 5) throw runtime_error("unknown stereo match method: ");
 
 	// Image 1
 	int Img1h = mxGetM(prhs[0]), Img1w = mxGetN(prhs[0]);
@@ -26,14 +26,19 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	const double *data3 = (double *)mxGetPr(prhs[2]);
 	int num_keypoint = *data3;
 	
-	// Rotation or Not: not(default)
+	// Scale or Not: not(default)
 	const double *data4 = (double *)mxGetPr(prhs[3]);
-	int rotate = *data4;
+	int scale = *data4;
+	
+	// Rotation or Not: not(default)
+	const double *data5 = (double *)mxGetPr(prhs[4]);
+	int rotate = *data5;
+	
 	
 	// orb
 	vector<KeyPoint> kp1, kp2;
 	Mat d1, d2;
-	vector<DMatch> matches_all, matches_grid;
+	vector<DMatch> matches_all, matches_gms;
 	Ptr<ORB> orb = ORB::create(num_keypoint);
 	orb->setFastThreshold(0);
 	orb->detectAndCompute(img1, Mat(), kp1, d1);
@@ -44,13 +49,21 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	matcher.match(d1, d2, matches_all);
 	
 	// GMS
-	GMS FM;
-	FM.init(img1.size(), img2.size(), kp1, kp2, matches_all);
-	FM.setParameter(20, 20);
-	matches_grid = FM.getInlier(rotate);
+	int num_inliers = 0;
+	std::vector<bool> vbInliers;
+	gms_matcher gms(kp1,img1.size(), kp2,img2.size(), matches_all);
+	num_inliers = gms.GetInlierMask(vbInliers, scale, rotate);
+
+	for (size_t i = 0; i < vbInliers.size(); ++i)
+	{
+		if (vbInliers[i] == true)
+		{
+			matches_gms.push_back(matches_all[i]);
+		}
+	}
 
 	// write
-	int matched_number = matches_grid.size();
+	int matched_number = matches_gms.size();
 
 	// write ratio
 	plhs[0] = mxCreateNumericMatrix(2, matched_number, mxDOUBLE_CLASS, mxREAL);
@@ -58,7 +71,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	double *p1 = (double *)mxGetPr(plhs[0]), *p2 = (double *)mxGetPr(plhs[1]);
 	for (int i = 0; i < matched_number; i++)
 	{
-		const DMatch &match = matches_grid[i];
+		const DMatch &match = matches_gms[i];
 
 		p1[0] = kp1[match.queryIdx].pt.x;
 		p1[1] = kp1[match.queryIdx].pt.y;

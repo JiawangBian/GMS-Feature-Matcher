@@ -3,9 +3,9 @@
 //#define USE_GPU 
 
 #include "Header.h"
-#include "GMS.h"
+#include "gms_matcher.h"
 
-void GridMatch(Mat &img1, Mat &img2);
+void GmsMatch(Mat &img1, Mat &img2);
 
 void runImagePair(){
 	Mat img1 = imread("../data/nn_left.jpg");
@@ -14,7 +14,7 @@ void runImagePair(){
 	imresize(img1, 480);
 	imresize(img2, 480);
 
-	GridMatch(img1, img2);
+	GmsMatch(img1, img2);
 }
 
 
@@ -31,10 +31,10 @@ int main()
 }
 
 
-void GridMatch(Mat &img1, Mat &img2){
+void GmsMatch(Mat &img1, Mat &img2){
 	vector<KeyPoint> kp1, kp2;
 	Mat d1, d2;
-	vector<DMatch> matches_all, matches_grid;
+	vector<DMatch> matches_all, matches_gms;
 
 	Ptr<ORB> orb = ORB::create(10000);
 	orb->setFastThreshold(0);
@@ -51,14 +51,23 @@ void GridMatch(Mat &img1, Mat &img2){
 #endif
 
 	// GMS filter
-	GMS gms;
-	gms.init(img1.size(), img2.size(), kp1, kp2, matches_all);
-	gms.setParameter(20, 20);
-	matches_grid = gms.getInlier(0);
+	int num_inliers = 0;
+	std::vector<bool> vbInliers;
+	gms_matcher gms(kp1,img1.size(), kp2,img2.size(), matches_all);
+	num_inliers = gms.GetInlierMask(vbInliers, false, true);
 
-	cout << "Get total " << matches_grid.size() << " matches." << endl;
+	cout << "Get total " << num_inliers << " matches." << endl;
 
-	Mat show = DrawInlier(img1, img2, kp1, kp2, matches_grid, 1);
+	// draw matches
+	for (size_t i = 0; i < vbInliers.size(); ++i)
+	{
+		if (vbInliers[i] == true)
+		{
+			matches_gms.push_back(matches_all[i]);
+		}
+	}
+
+	Mat show = DrawInlier(img1, img2, kp1, kp2, matches_gms, 1);
 	imshow("show", show);
 	waitKey();
 }
