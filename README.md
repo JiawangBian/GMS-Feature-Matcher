@@ -47,19 +47,12 @@ Tune Parameters:
 		1.#define USE_GPU" will need gpu cudafeatures2d module for nearest neighbor match, 
 			using cpu match by commenting it.
 	
-	In GMS.h
-		2.	#define LocalTheshold 1			// Chosing threshold has two ways : global and local
-				1 for local threshold, 0 for global threshold;
+	In gms_matcher.h
 				
-		3.	#define TreshFactor 6			// factor for calculating threshold
+		2.	#define THRESH_FACTOR 6			// factor for calculating threshold
 				The higher, the less matches, vice verse
 				
-		4. 	GMS::setParameter(int num1, int num2 )
-				The grid number = num * num for left and right image.
-				num = 20 is a normal option.
+		3. 	int GetInlierMask(vector<bool> &vbInliers, bool WithScale = false, bool WithRotation = false)
+				You can open multi-scale and rotation if your image pair contains that. 
 				
-		5. 	GMS::getInlier(int withRS)
-				0 means no ration and no scale version (default)
-				1 means with rotatio and scale change. (may better but slower)
-
 
