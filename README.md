@@ -7,16 +7,23 @@ Abstract
 
 Incorporating smoothness constraints into feature matching is known to enable ultra-robust matching. However, such formulations are both complex and slow, making them unsuitable for video applications. This paper proposes GMS (Grid-based Motion Statistics), a simple means of encapsulating motion smoothness as the statistical likelihood of a certain number of matches in a region. GMS enables translation of high match numbers into high match quality. This provides a real-time, ultra-robust correspondence system. Evaluation on videos, with low textures, blurs and wide-baselines show GMS consistently out-performs other real-time matchers and can achieve parity with more sophisticated, much slower techniques.
 
+Author
 
-Paper
+[JiaWang Bian](http://jwbian.net), Wen-Yan Lin, [Yasuyuki Matsushita](http://www-infobiz.ist.osaka-u.ac.jp/user/matsushita/index.html), [Sai-Kit Yeung](http://people.sutd.edu.sg/~saikit/), Tan Dat Nguyen, [Ming-Ming Cheng](http://mmcheng.net)
 
-GMS: Grid-based Motion Statistics for Fast, Ultra-robust Feature Correspondence JiaWang Bian, Daniel Lin, Yasuyuki Matsushita, Sai-Kit Yeung, Tan Dat Nguyen, Ming-Ming Cheng IEEE CVPR, 2017 [[Project Page](http://jwbian.net/gms)] [[pdf](http://jwbian.net/Papers/GMS_CVPR17.pdf)] [[Code](https://github.com/JiawangBian/GMS-Feature-Matcher)] [[Video Demo](http://jwbian.net/Demo/gms_matching_demo.mp4)]
 
+Publication:
+
+**GMS: Grid-based Motion Statistics for Fast, Ultra-robust Feature Correspondence** JiaWang Bian, Daniel Lin, Yasuyuki Matsushita, Sai-Kit Yeung, Tan Dat Nguyen, Ming-Ming Cheng **IEEE CVPR, 2017** [[Project Page](http://jwbian.net/gms)] [[pdf](http://jwbian.net/Papers/GMS_CVPR17.pdf)] [[Code](https://github.com/JiawangBian/GMS-Feature-Matcher)] [[Video Demo](http://jwbian.net/Demo/gms_matching_demo.mp4)]
 
 
 Citation 
 
 	If you use the code in your publication, please cite our paper.
+	
+Video Matching Demo
+	
+[![IMAGE ALT TEXT HERE](http://jwbian.net/wp-content/uploads/2017/04/matching_demo_chair-e1492913756279.png)](https://youtu.be/3SlBqspLbxI)   [![IMAGE ALT TEXT HERE](http://jwbian.net/wp-content/uploads/2017/04/matching_demo_tum-e1492913770981.png)](https://youtu.be/tjMpgno6k5A)   [![IMAGE ALT TEXT HERE](http://jwbian.net/wp-content/uploads/2017/04/matching_demo_car-e1492913739458.png)](https://youtu.be/TIVWTTQTkeI)
 
 Environment:
 
