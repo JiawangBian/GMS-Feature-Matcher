@@ -333,6 +333,7 @@ void gms_matcher::VerifyCellPairs(int RotationType) {
 
 int gms_matcher::run(int RotationType, int Scale) {
 
+	mvbInlierMask.assign(mNumberMatches, false);
 	for (int GridType = 1; GridType <= 4; GridType++)
 	{
 		// Set Scale
@@ -344,7 +345,6 @@ int gms_matcher::run(int RotationType, int Scale) {
 		mCellPairs.assign(mGridNumberLeft, -1);
 		mNumberPointsInPerCellLeft.assign(mGridNumberLeft, 0);
 		mvMatchPairs.assign(mNumberMatches, pair<int, int>(0, 0));
-		mvbInlierMask.assign(mNumberMatches, false);
 
 		AssignMatchPairs(GridType);
 		VerifyCellPairs(RotationType);
