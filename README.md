@@ -29,7 +29,7 @@ Example:
 	
 Tune Parameters:
 
-	In Main.cpp
+	In demo.cpp
 		1.#define USE_GPU" will need gpu cudafeatures2d module for nearest neighbor match, 
 			using cpu match by commenting it.
 	
@@ -44,10 +44,10 @@ Tune Parameters:
 
 ## If you like work, please cite
 	@article{bian2017gms,
-  	title={GMS: Grid-based Motion Statistics for Fast, Ultra-robust Feature Correspondence},
-  	author={JiaWang Bian and Wen-Yan Lin and Yasuyuki Matsushita and Sai-Kit Yeung and Tan Dat Nguyen and Ming-Ming Cheng},
-  	booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition},
-  	year={2017}
+  		title={GMS: Grid-based Motion Statistics for Fast, Ultra-robust Feature Correspondence},
+  		author={JiaWang Bian and Wen-Yan Lin and Yasuyuki Matsushita and Sai-Kit Yeung and Tan Dat Nguyen and Ming-Ming Cheng},
+  		booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition},
+  		year={2017}
 	}
 
 
