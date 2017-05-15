@@ -4,14 +4,13 @@
 
 
 
-## Author
+## Publication:
 
 [JiaWang Bian](http://jwbian.net), Wen-Yan Lin, [Yasuyuki Matsushita](http://www-infobiz.ist.osaka-u.ac.jp/user/matsushita/index.html), [Sai-Kit Yeung](http://people.sutd.edu.sg/~saikit/), Tan Dat Nguyen, [Ming-Ming Cheng](http://mmcheng.net)
 
+**GMS: Grid-based Motion Statistics for Fast, Ultra-robust Feature Correspondence**  **IEEE CVPR, 2017** 
 
-## Publication:
-
-**GMS: Grid-based Motion Statistics for Fast, Ultra-robust Feature Correspondence** JiaWang Bian, Daniel Lin, Yasuyuki Matsushita, Sai-Kit Yeung, Tan Dat Nguyen, Ming-Ming Cheng **IEEE CVPR, 2017** [[Project Page](http://jwbian.net/gms)] [[pdf](http://jwbian.net/Papers/GMS_CVPR17.pdf)] [[Code](https://github.com/JiawangBian/GMS-Feature-Matcher)] [[Video Demo](http://jwbian.net/Demo/gms_matching_demo.mp4)]
+[[Project Page](http://jwbian.net/gms)] [[pdf](http://jwbian.net/Papers/GMS_CVPR17.pdf)] [[Code](https://github.com/JiawangBian/GMS-Feature-Matcher)] [[Video Demo](http://jwbian.net/Demo/gms_matching_demo.mp4)]
 
 
 	
