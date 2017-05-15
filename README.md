@@ -10,7 +10,7 @@
 
 **GMS: Grid-based Motion Statistics for Fast, Ultra-robust Feature Correspondence**  **IEEE CVPR, 2017** 
 
-[[Project Page](http://jwbian.net/gms)] [[pdf](http://jwbian.net/Papers/GMS_CVPR17.pdf)] [[Code](https://github.com/JiawangBian/GMS-Feature-Matcher)] [[Youtube](https://youtu.be/3SlBqspLbxI)]
+[[Project Page](http://jwbian.net/gms)] [[pdf](http://jwbian.net/Papers/GMS_CVPR17.pdf)] [[Bib](http://jwbian.net/Papers/bian2017gms.txt)] [[Code](https://github.com/JiawangBian/GMS-Feature-Matcher)] [[Youtube](https://youtu.be/3SlBqspLbxI)]
 
 
 	
@@ -42,7 +42,7 @@ Tune Parameters:
 				You can open multi-scale and rotation if your image pair contains that. 
 				
 
-## If you like work, please cite
+## If you like this work, please cite our paper
 	@article{bian2017gms,
   		title={GMS: Grid-based Motion Statistics for Fast, Ultra-robust Feature Correspondence},
   		author={JiaWang Bian and Wen-Yan Lin and Yasuyuki Matsushita and Sai-Kit Yeung and Tan Dat Nguyen and Ming-Ming Cheng},
