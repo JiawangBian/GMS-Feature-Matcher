@@ -275,7 +275,9 @@ void gms_matcher::AssignMatchPairs(int GridType) {
 
 		const int lgidx = mvMatchPairs[i].first = GetGridIndexLeft(lp, GridType);
 		const int rgidx = mvMatchPairs[i].second = GetGridIndexRight(rp);
-
+		
+		if(lgidx < 0 || rgidx < 0)	continue;
+		
 		mMotionStatistics[lgidx][rgidx] ++;
 		mNumberPointsInPerCellLeft[lgidx]++;
 	}
