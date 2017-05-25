@@ -3,6 +3,45 @@
 
 #define THRESH_FACTOR 6
 
+// 8 possible rotation and each one is 3 X 3 
+const int mRotationPatterns[8][9] = {
+	1,2,3,
+	4,5,6,
+	7,8,9,
+
+	4,1,2,
+	7,5,3,
+	8,9,6,
+
+	7,4,1,
+	8,5,2,
+	9,6,3,
+
+	8,7,4,
+	9,5,1,
+	6,3,2,
+
+	9,8,7,
+	6,5,4,
+	3,2,1,
+
+	6,9,8,
+	3,5,7,
+	2,1,4,
+
+	3,6,9,
+	2,5,8,
+	1,4,7,
+
+	2,3,6,
+	1,5,9,
+	4,7,8
+};
+
+// 5 level scales
+const double mScaleRatios[5] = { 1.0, 1.0 / 2, 1.0 / sqrt(2.0), sqrt(2.0), 2.0 };
+
+
 class gms_matcher
 {
 public:
@@ -24,49 +63,11 @@ public:
 
 private:
 
-	// 8 possible rotation and each one is 3 X 3 
-	const int mRotationPatterns[8][9] = {
-		1,2,3,
-		4,5,6,
-		7,8,9,
-
-		4,1,2,
-		7,5,3,
-		8,9,6,
-
-		7,4,1,
-		8,5,2,
-		9,6,3,
-
-		8,7,4,
-		9,5,1,
-		6,3,2,
-
-		9,8,7,
-		6,5,4,
-		3,2,1,
-
-		6,9,8,
-		3,5,7,
-		2,1,4,
-
-		3,6,9,
-		2,5,8,
-		1,4,7,
-
-		2,3,6,
-		1,5,9,
-		4,7,8
-	};
-
-	// 5 level scales
-	const double mScaleRatios[5] = { 1.0, 1.0 / 2, 1.0 / sqrt(2.0), sqrt(2.0), 2.0 };
-
 	// Normalized Points
 	vector<Point2f> mvP1, mvP2;
 
 	// Matches
-	vector<pair<int, int>> mvMatches;
+	vector<pair<int, int> > mvMatches;
 
 	// Number of Matches
 	size_t mNumberMatches;
@@ -78,7 +79,7 @@ private:
 	// Index	  : left grid idx
 	// map.first  : right grid idx
 	// map.second : how many matches from idx_left to idx_right
-	vector<map<int, int>> mMotionStatistics;
+	vector<map<int, int> > mMotionStatistics;
 
 	// 
 	vector<int> mNumberPointsInPerCellLeft;
@@ -118,7 +119,7 @@ private:
 	}
 
 	// Convert OpenCV DMatch to Match (pair<int, int>)
-	void ConvertMatches(const vector<DMatch> &vDMatches, vector<pair<int, int>> &vMatches) {
+	void ConvertMatches(const vector<DMatch> &vDMatches, vector<pair<int, int> > &vMatches) {
 		vMatches.resize(mNumberMatches);
 		for (size_t i = 0; i < mNumberMatches; i++)
 		{
@@ -127,7 +128,7 @@ private:
 	}
 
 	int GetGridIndexLeft(const Point2f &pt, int type) {
-		int x, y;
+		int x = 0, y = 0;
 
 		if (type == 1) {
 			x = floor(pt.x * mGridSizeLeft.width);
@@ -297,13 +298,16 @@ void gms_matcher::VerifyCellPairs(int RotationType) {
 		}
 
 		int max_number = 0;
-		for (auto &p : mMotionStatistics[i])
+		for (map<int, int>::iterator it = mMotionStatistics[i].begin(); it != mMotionStatistics[i].end(); ++it)
 		{
-			if (p.second > max_number) {
-				mCellPairs[i] = p.first;
-				max_number = p.second;
+			if (it->second > max_number)
+			{
+				mCellPairs[i] = it->first;
+				max_number = it->second;
 			}
 		}
+
+
 
 		int idx_grid_rt = mCellPairs[i];
 
