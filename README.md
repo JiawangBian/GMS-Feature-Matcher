@@ -22,10 +22,13 @@ Requirement:
 
 	2.cudafeatures2d module(for gpu nearest neighbor, optional)
 
-Example:
+C++ Example:
 
 	Image pair demo in demo.cpp.
 	
+Matlab Example
+	
+	You should compile the code with opencv library firstly(see the 'Compile.m').
 	
 Tune Parameters:
 
