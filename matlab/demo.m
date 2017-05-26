@@ -1,6 +1,8 @@
 clear; clc;
 addpath('../data');
 
+Compile;
+
 I1 = imread('nn_left.jpg');
 I2 = imread('nn_right.jpg');
 
