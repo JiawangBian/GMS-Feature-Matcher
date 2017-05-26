@@ -1,1 +1,0 @@
-You should compile the code with opencv library firstly.
