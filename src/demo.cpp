@@ -54,7 +54,7 @@ void GmsMatch(Mat &img1, Mat &img2){
 	int num_inliers = 0;
 	std::vector<bool> vbInliers;
 	gms_matcher gms(kp1,img1.size(), kp2,img2.size(), matches_all);
-	num_inliers = gms.GetInlierMask(vbInliers, false, true);
+	num_inliers = gms.GetInlierMask(vbInliers, false, false);
 
 	cout << "Get total " << num_inliers << " matches." << endl;
 
