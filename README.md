@@ -29,6 +29,10 @@ C++ Example:
 Matlab Example
 	
 	You should compile the code with opencv library firstly(see the 'Compile.m').
+
+Python Example:
+	
+	Use Python3 to run gms_matcher script.
 	
 Tune Parameters:
 
