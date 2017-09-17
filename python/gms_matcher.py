@@ -89,11 +89,20 @@ class GmsMatcher:
         self.keypoints_image1 = []
         self.keypoints_image2 = []
 
+    def empty_matches(self):
+        self.normalized_points1 = []
+        self.normalized_points2 = []
+        self.matches = []
+        self.gms_matches = []
+
     def compute_matches(self, img1, img2):
         self.keypoints_image1, descriptors_image1 = self.descriptor.detectAndCompute(img1, np.array([]))
         self.keypoints_image2, descriptors_image2 = self.descriptor.detectAndCompute(img2, np.array([]))
         size1 = Size(img1.shape[1], img1.shape[0])
         size2 = Size(img2.shape[1], img2.shape[0])
+
+        if self.gms_matches:
+            self.empty_matches()
         
         all_matches = self.matcher.match(descriptors_image1, descriptors_image2)
         self.normalize_points(self.keypoints_image1, size1, self.normalized_points1)
@@ -348,3 +357,4 @@ if __name__ == '__main__':
 
     matches = gms.compute_matches(img1, img2)
     gms.draw_matches(img1, img2, DrawingType.ONLY_LINES)
+
