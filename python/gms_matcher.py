@@ -222,7 +222,7 @@ class GmsMatcher:
 
             # Mark inliers
             for i in range(self.matches_number):
-                if self.cell_pairs[self.match_pairs[i][0]] == self.match_pairs[i][1]:
+                if self.cell_pairs[int(self.match_pairs[i][0])] == self.match_pairs[i][1]:
                     self.inlier_mask[i] = True
 
         return sum(self.inlier_mask)
@@ -240,8 +240,8 @@ class GmsMatcher:
 
             if lgidx < 0 or rgidx < 0:
                 continue
-            self.motion_statistics[lgidx, int(rgidx)] += 1
-            self.number_of_points_per_cell_left[lgidx] += 1
+            self.motion_statistics[int(lgidx)][int(rgidx)] += 1
+            self.number_of_points_per_cell_left[int(lgidx)] += 1
 
     def get_grid_index_left(self, pt, type_of_grid):
         x = pt[0] * self.grid_size_left.width
@@ -352,7 +352,10 @@ if __name__ == '__main__':
 
     orb = cv2.ORB_create(10000)
     orb.setFastThreshold(0)
-    matcher = cv2.BFMatcher_create(cv2.NORM_HAMMING)
+    if cv2.__version__.startswith('3'):
+        matcher = cv2.BFMatcher(cv2.NORM_HAMMING)
+    else:
+        matcher = cv2.BFMatcher_create(cv2.NORM_HAMMING)
     gms = GmsMatcher(orb, matcher)
 
     matches = gms.compute_matches(img1, img2)
