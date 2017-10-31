@@ -1,6 +1,6 @@
 // GridMatch.cpp : Defines the entry point for the console application.
 
-//#define USE_GPU 
+//#define USE_GPU
 
 #include "Header.h"
 #include "gms_matcher.h"
@@ -8,8 +8,11 @@
 void GmsMatch(Mat &img1, Mat &img2);
 
 void runImagePair(){
-	Mat img1 = imread("../data/nn_left.jpg");
-	Mat img2 = imread("../data/nn_right.jpg");
+	// Mat img1 = imread("../data/nn_left.jpg");
+	// Mat img2 = imread("../data/nn_right.jpg");
+
+	Mat img1 = imread("../data/kf_1140.png");
+	Mat img2 = imread("../data/kf_2583.png");
 
 	imresize(img1, 480);
 	imresize(img2, 480);
@@ -67,9 +70,9 @@ void GmsMatch(Mat &img1, Mat &img2){
 		}
 	}
 
-	Mat show = DrawInlier(img1, img2, kp1, kp2, matches_gms, 1);
+	Mat show = DrawInlier(img1, img2, kp1, kp2, matches_gms, 3);
 	imshow("show", show);
 	waitKey();
+	cout << "Write file : output.png\n";
+	imwrite( "output.png", show );
 }
-
-
