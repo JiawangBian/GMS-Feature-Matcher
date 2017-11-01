@@ -35,15 +35,24 @@ int main()
 
 
 void GmsMatch(Mat &img1, Mat &img2){
+	boost::timer t, t1;
+
 	vector<KeyPoint> kp1, kp2;
 	Mat d1, d2;
 	vector<DMatch> matches_all, matches_gms;
 
+	t1.restart();
 	Ptr<ORB> orb = ORB::create(10000);
+	cout << "ORB Create : " << t1.elapsed() << endl;
+
 	orb->setFastThreshold(0);
+
+	t1.restart();
 	orb->detectAndCompute(img1, Mat(), kp1, d1);
 	orb->detectAndCompute(img2, Mat(), kp2, d2);
+	cout << "ORB detectAndCompute : " << t1.elapsed() << endl;
 
+	t1.restart();
 #ifdef USE_GPU
 	GpuMat gd1(d1), gd2(d2);
 	Ptr<cuda::DescriptorMatcher> matcher = cv::cuda::DescriptorMatcher::createBFMatcher(NORM_HAMMING);
@@ -52,6 +61,7 @@ void GmsMatch(Mat &img1, Mat &img2){
 	BFMatcher matcher(NORM_HAMMING);
 	matcher.match(d1, d2, matches_all);
 #endif
+	cout << "BFMatcher : " << t1.elapsed() << endl;
 
 	// GMS filter
 	int num_inliers = 0;
@@ -70,6 +80,9 @@ void GmsMatch(Mat &img1, Mat &img2){
 		}
 	}
 
+	cout << "Elapsed time c++: (sec)" << t.elapsed() << endl;
+
+	
 	Mat show = DrawInlier(img1, img2, kp1, kp2, matches_gms, 3);
 	imshow("show", show);
 	waitKey();
