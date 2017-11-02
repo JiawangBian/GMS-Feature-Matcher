@@ -68,10 +68,24 @@ class DrawingType(Enum):
 
 
 class GmsMatcher:
-    def __init__(self, descriptor=None, matcher=None):
+    def __init__(self, descriptor=None, matcher=None, n=10000, verbosity=0):
+        """
+            descriptor : The Feature point descriptor. If it is None, we initialize a ORB
+                         extractor with 10000 features. This can be altered with the argument n.
+
+            matcher : The matcher. If None provided we initialize a brute force matcher.
+
+            verbose : if 0 will not print out message. 5 will print all messages.
+        """
+        self.verbosity = verbosity
 
         if descriptor is None:
-            descriptor = cv2.ORB_create(100)
+            if n<10:
+                descriptor = cv2.ORB_create(10000)
+                self._print_filt( 'Create ORB detector with n=10000', 1)
+            else:
+                descriptor = cv2.ORB_create(n)
+                self._print_filt( 'Create ORB detector with n=%d' %(n), 1 )
             descriptor.setFastThreshold(0)
 
         if matcher is None:
@@ -79,6 +93,7 @@ class GmsMatcher:
                 matcher = cv2.BFMatcher(cv2.NORM_HAMMING)
             else:
                 matcher = cv2.BFMatcher_create(cv2.NORM_HAMMING)
+
 
         self.scale_ratios = [1.0, 1.0 / 2, 1.0 / math.sqrt(2.0), math.sqrt(2.0), 2.0]
         # Normalized vectors of 2D points
@@ -122,6 +137,10 @@ class GmsMatcher:
         self.keypoints_image1 = []
         self.keypoints_image2 = []
 
+    def _print_filt( self, msg, ch ):
+        if self.verbosity > ch:
+            print( msg )
+
     def empty_matches(self):
         self.normalized_points1 = []
         self.normalized_points2 = []
@@ -132,7 +151,7 @@ class GmsMatcher:
         startKeypts = time.time()
         self.keypoints_image1, descriptors_image1 = self.descriptor.detectAndCompute(img1, None )#np.array([]))
         self.keypoints_image2, descriptors_image2 = self.descriptor.detectAndCompute(img2, None )#np.array([]))
-        print 'compute_matches(): detectAndCompute took (ms): %4.2f' %(1000.*(time.time() - startKeypts ) )
+        self._print_filt( 'compute_matches(): detectAndCompute took (ms): %4.2f' %(1000.*(time.time() - startKeypts ) ), 1 )
 
         size1 = Size(img1.shape[1], img1.shape[0])
         size2 = Size(img2.shape[1], img2.shape[0])
@@ -142,8 +161,8 @@ class GmsMatcher:
 
         startMatcher = time.time()
         all_matches = self.matcher.match(descriptors_image1, descriptors_image2)
-        code.interact( local=locals() )
-        print 'compute_matches(): self.matcher.match took (ms): %4.2f' %(1000.*(time.time() - startMatcher ) )
+        # code.interact( local=locals() )
+        self._print_filt( 'compute_matches(): self.matcher.match took (ms): %4.2f' %(1000.*(time.time() - startMatcher ) ), 1 )
 
         self.normalize_points(self.keypoints_image1, size1, self.normalized_points1)
         self.normalize_points(self.keypoints_image2, size2, self.normalized_points2)
@@ -154,8 +173,8 @@ class GmsMatcher:
 
         startVote = time.time()
         mask, num_inliers = self.get_inlier_mask(False, False) #This is the most expensive function call, which inturn calls run()
-        print('Found', num_inliers, 'matches')
-        print 'compute_matches(): GMS Voting took (ms): %4.2f' %(1000.*(time.time() - startVote ) )
+        self._print_filt( '%s, %s, %s' %('Found', num_inliers, 'matches'), 1 )
+        self._print_filt( 'compute_matches(): GMS Voting took (ms): %4.2f' %(1000.*(time.time() - startVote ) ), 1 )
 
 
         for i in range(len(mask)):
@@ -398,8 +417,16 @@ class GmsRobe:
     ##      a) match2( imC, imP )
     ##      b) match3( imC, imP, imCm )
     ##      c) match2_guided( imC, pt1, imP )
-    def __init__(self):
-        self.gms = GmsMatcher()
+    def __init__(self, descriptor=None, matcher=None, n=10000, verbosity=0):
+        """
+        descriptor : The Feature point descriptor. If it is None, we initialize a ORB
+                     extractor with 10000 features. This can be altered with the argument n.
+
+        matcher : The matcher. If None provided we initialize a brute force matcher.
+
+        verbose : if 0 will not print out message. 5 will print all messages.
+        """
+        self.gms = GmsMatcher(descriptor, matcher, n, verbosity)
 
 
     def match2( self, imC, imP ):
@@ -543,6 +570,12 @@ class GmsRobe:
     def plot_3way_match( self, curr_im, pts_curr, prev_im, pts_prev, curr_m_im, pts_curr_m, enable_text=True, enable_lines=False, show_random_points=-1 ):
         """     pts_curr, pts_prev, pts_curr_m : 2xN numpy matrix
 
+                :flags:
+                enable_text: Enable/disable printing point index in image
+                enable_lines: Enable/disable lines drawing
+                show_random_points: Only show this many number of random matches. Mainly to avoid clutter.
+
+
                 returns : # grid : [ [curr, prev], [curr-1  X ] ]
         """
 
@@ -602,8 +635,15 @@ class GmsRobe:
         return gridd
 
 
-    def plot_point_sets( self, im1, pt1, im2, pt2, mask=None, enable_text=True, enable_lines=False ):
-        """ pt1, pt2 : 2xN array """
+    def plot_point_sets( self, im1, pt1, im2, pt2, mask=None, enable_text=True, enable_lines=False, show_random_points=-1 ):
+        """ pt1, pt2 : 2xN array
+
+            :flags:
+            enable_text: Enable/disable printing point index in image
+            enable_lines: Enable/disable lines drawing
+            show_random_points: Only show this many number of random matches. Mainly to avoid clutter.
+
+        """
         assert( pt1.shape[0] == 2 )
         assert( pt2.shape[0] == 2 )
         assert( pt1.shape[1] == pt2.shape[1] )
@@ -611,7 +651,13 @@ class GmsRobe:
         #TODO: if im1 and im2 are 2 channel, this might cause issues
 
         xcanvas = np.concatenate( (im1, im2), axis=1 )
-        for xi in range( pt1.shape[1] ):
+        N = pt1.shape[1]
+        if show_random_points < 0 or show_random_points > N:
+            spann = range(N)
+        else:
+            spann = np.random.randint( 0, N, show_random_points )
+
+        for xi in spann:
             if (mask is not None) and (mask[xi,0] == 0):
                 continue
 
@@ -653,97 +699,3 @@ def imresize(src, height):
     ratio = src.shape[0] * 1.0/height
     width = int(src.shape[1] * 1.0/ratio)
     return cv2.resize(src, (width, height))
-
-
-if __name__ == '__main__':
-    imgP = cv2.imread("../data/kf_1140.png") #curr
-    imgC = cv2.imread("../data/kf_2583.png") #prev
-    imgCm = cv2.imread("../data/kf_2581.png") #currm
-
-    gms = GmsRobe()
-
-    print 'Test gmsrobe.match3()'
-    startT = time.time()
-    pts_C, pts_P, pts_Cm = gms.match3( imgC, imgP, imgCm )
-    print 'gmsrobe.match3 took (ms): %4.2f' %(1000.*(time.time() - startT ) )
-
-    gridd = gms.plot_3way_match( imgC, pts_C,   imgP, pts_P,    imgCm, pts_Cm, show_random_points=40 )
-    cv2.imshow( 'gridd', gridd )
-    cv2.waitKey(0)
-
-
-
-if __name__ == '__xmain__':
-
-    print 'Test gmsrobe.match2_guided()'
-    imgP = cv2.imread("../data/kf_1140.png") #curr
-    imgC = cv2.imread("../data/kf_2583.png") #prev
-
-    orb = cv2.ORB_create(50)
-    kp1 = orb.detect(imgC, None)
-    print 'nORB Pts:', len(kp1)
-    pts_C = np.transpose( np.array([ np.array(k.pt) for k in kp1 ]) ) #2xN
-
-
-    gms = GmsRobe()
-
-    startT = time.time()
-    ptC, ptP = gms.match2_guided( imgC, pts_C, imgP )
-    print 'Elapsed total (ms): %4.2f' %(1000.0 * (time.time() - startT )  )
-    print 'nGuided Pts: ', ptC.shape[1]
-
-    cv2.imshow( 'orb points on curr', gms.plot_points_on_image( imgC, pts_C ) )
-    cv2.imshow( 'xcanvas', gms.plot_point_sets( imgC, ptC, imgP, ptP ) )
-    cv2.waitKey(0)
-
-
-
-
-if __name__ == '__xmain__':
-    print 'Test simple gmsrobe.match2()'
-    imgP = cv2.imread("../data/kf_1140.png") #curr
-    imgC = cv2.imread("../data/kf_2583.png") #prev
-
-    gms = GmsRobe()
-
-    startT = time.time()
-    ptC, ptP = gms.match2( imgC, imgP )
-    # ptC, ptCm = gms.match2( imgC, imgCm )
-    print 'Elapsed total (ms): %4.2f' %(1000.0 * (time.time() - startT )  )
-
-
-    xcanvas = gms.plot_point_sets( imgC, ptC, imgP, ptP )
-
-    # r = np.random.randint( 0, ptC.shape[1], 50 )
-    # xcanvas = gms.plot_point_sets( imgC, ptC[:,r], imgCm, ptCm[:,r] )
-    cv2.imshow( 'xcanvas', xcanvas )
-    cv2.waitKey(0)
-
-
-
-if __name__ == '__xmain__':
-    print 'Test for Original GMS Implementation, ie. class GmsMatcher'
-    # img1 = cv2.imread("../data/nn_left.jpg")
-    # img2 = cv2.imread("../data/nn_right.jpg")
-
-    # img1 = imresize(img1, 240)
-    # img2 = imresize(img2, 240)
-
-    img1 = cv2.imread("../data/kf_2581.png")
-    img2 = cv2.imread("../data/kf_2583.png")
-
-
-
-    # orb = cv2.ORB_create(10000)
-    # orb.setFastThreshold(0)
-    # if cv2.__version__.startswith('3'):
-    #     matcher = cv2.BFMatcher(cv2.NORM_HAMMING)
-    # else:
-    #     matcher = cv2.BFMatcher_create(cv2.NORM_HAMMING)
-    # gms = GmsMatcher(orb, matcher)
-    gms = GmsMatcher()
-    startT = time.time()
-    matches = gms.compute_matches(img1, img2)
-    print 'gms.compute_matches took (ms): %4.2f' %(1000.*(time.time() - startT ) )
-    # gms.draw_matches(img1, img2, DrawingType.ONLY_LINES)
-    gms.draw_matches(img1, img2, DrawingType.POINTS_AND_TEXT)

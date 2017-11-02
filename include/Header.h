@@ -10,7 +10,6 @@
 #include <iostream>
 #include <ctime>
 #include <string>
-#include <boost/timer.hpp>
 using namespace std;
 using namespace cv;
 

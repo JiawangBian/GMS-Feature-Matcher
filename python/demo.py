@@ -1,3 +1,5 @@
+## This script has demo use cases for the original GmsMatcher class as well as
+## for the GmsRobe class.
 
 import math
 from enum import Enum
@@ -33,7 +35,9 @@ def demo_match3():
     print 'gmsrobe.match3 took (ms): %4.2f' %(1000.*(time.time() - startT ) )
 
     gridd = gms.plot_3way_match( imgC, pts_C,   imgP, pts_P,    imgCm, pts_Cm, show_random_points=40 )
-    cv2.imshow( 'gridd', gridd )
+    gridd2 = gms.plot_3way_match( imgC, pts_C,   imgP, pts_P,    imgCm, pts_Cm, show_random_points=-1, enable_lines=False )
+    cv2.imshow( 'showing 3way match. Randomly selected 40 points only', gridd )
+    cv2.imshow( 'showing 3way match.', gridd2 )
     cv2.waitKey(0)
 
 
@@ -66,22 +70,23 @@ def demo_match2_guided():
 
 def demo_match2():
     print 'Test simple gmsrobe.match2()'
-    imgP = cv2.imread("../data/kf_1140.png") #curr
-    imgC = cv2.imread("../data/kf_2583.png") #prev
+    imgP = cv2.imread("../data/kf_972.png") #curr
+    imgC = cv2.imread("../data/kf_973.png") #prev
 
     gms = GmsRobe()
 
     startT = time.time()
     ptC, ptP = gms.match2( imgC, imgP )
-    # ptC, ptCm = gms.match2( imgC, imgCm )
     print 'Elapsed total (ms): %4.2f' %(1000.0 * (time.time() - startT )  )
 
 
-    xcanvas = gms.plot_point_sets( imgC, ptC, imgP, ptP )
+    xcanvas = gms.plot_point_sets( imgC, ptC, imgP, ptP, enable_lines=False )
+    xcanvas2 = gms.plot_point_sets( imgC, ptC, imgP, ptP, show_random_points=60 )
 
     # r = np.random.randint( 0, ptC.shape[1], 50 )
     # xcanvas = gms.plot_point_sets( imgC, ptC[:,r], imgCm, ptCm[:,r] )
-    cv2.imshow( 'xcanvas', xcanvas )
+    cv2.imshow( 'All matches', xcanvas )
+    cv2.imshow( 'Only show 60 random matches', xcanvas2 )
     cv2.waitKey(0)
 
 
@@ -98,23 +103,23 @@ def demo_gms_original_implementation():
     img2 = cv2.imread("../data/kf_2583.png")
 
 
-
-    # orb = cv2.ORB_create(10000)
-    # orb.setFastThreshold(0)
-    # if cv2.__version__.startswith('3'):
-    #     matcher = cv2.BFMatcher(cv2.NORM_HAMMING)
-    # else:
-    #     matcher = cv2.BFMatcher_create(cv2.NORM_HAMMING)
-    # gms = GmsMatcher(orb, matcher)
-    gms = GmsMatcher()
+    gms = GmsMatcher(verbosity=1)
     startT = time.time()
     matches = gms.compute_matches(img1, img2)
     print 'gms.compute_matches took (ms): %4.2f' %(1000.*(time.time() - startT ) )
-    # gms.draw_matches(img1, img2, DrawingType.ONLY_LINES)
     gms.draw_matches(img1, img2, DrawingType.POINTS_AND_TEXT)
 
 if __name__ == '__main__':
-    # demo_match3()
-    # demo_match2_guided()
-    demo_match2()
-    # demo_gms_original_implementation()
+    # Try any of the 4 demos.
+    which_demo = raw_input('a:demo_match3\nb:demo_match2_guided\nc:demo_match2\nd:demo_gms_original_implementation\nWhich demo do you want to try? ')
+    print( '%s' %(which_demo))
+
+    if which_demo == 'a':
+        demo_match3()
+    if which_demo == 'b':
+        demo_match2_guided()
+    if which_demo == 'c':
+        demo_match2()
+
+    if which_demo == 'd':
+        demo_gms_original_implementation()
