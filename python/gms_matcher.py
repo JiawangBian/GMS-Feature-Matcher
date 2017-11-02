@@ -1,8 +1,29 @@
+## Adopted from : https://github.com/JiawangBian/GMS-Feature-Matcher
+## Acknowledment to original Authors
+# @inproceedings{bian2017gms,
+#   title={GMS: Grid-based Motion Statistics for Fast, Ultra-robust Feature Correspondence},
+#   author={JiaWang Bian and Wen-Yan Lin and Yasuyuki Matsushita and Sai-Kit Yeung and Tan Dat Nguyen and Ming-Ming Cheng},
+#   booktitle={IEEE Conference on Computer Vision and Pattern Recognition},
+#   year={2017}
+# }
+#
+#
+# Added class GmsRobe by mpkuse
+#   This class can be used to expand macthes, and to find 3way matches. the
+#   core matcher is based on GMS-Feature-Matcher by Jiawang Bian.
+#       Date: 1st Nov, 2017
+
+
+
 import math
 from enum import Enum
 
 import cv2
 import numpy as np
+cv2.ocl.setUseOpenCL(False)
+
+import time
+import code
 
 THRESHOLD_FACTOR = 6
 
@@ -43,10 +64,37 @@ ROTATION_PATTERNS = [
 class DrawingType(Enum):
     ONLY_LINES = 1
     LINES_AND_POINTS = 2
+    POINTS_AND_TEXT = 3
 
 
 class GmsMatcher:
-    def __init__(self, descriptor, matcher):
+    def __init__(self, descriptor=None, matcher=None, n=10000, verbosity=0):
+        """
+            descriptor : The Feature point descriptor. If it is None, we initialize a ORB
+                         extractor with 10000 features. This can be altered with the argument n.
+
+            matcher : The matcher. If None provided we initialize a brute force matcher.
+
+            verbose : if 0 will not print out message. 5 will print all messages.
+        """
+        self.verbosity = verbosity
+
+        if descriptor is None:
+            if n<10:
+                descriptor = cv2.ORB_create(10000)
+                self._print_filt( 'Create ORB detector with n=10000', 1)
+            else:
+                descriptor = cv2.ORB_create(n)
+                self._print_filt( 'Create ORB detector with n=%d' %(n), 1 )
+            descriptor.setFastThreshold(0)
+
+        if matcher is None:
+            if cv2.__version__.startswith('3'):
+                matcher = cv2.BFMatcher(cv2.NORM_HAMMING)
+            else:
+                matcher = cv2.BFMatcher_create(cv2.NORM_HAMMING)
+
+
         self.scale_ratios = [1.0, 1.0 / 2, 1.0 / math.sqrt(2.0), math.sqrt(2.0), 2.0]
         # Normalized vectors of 2D points
         self.normalized_points1 = []
@@ -89,6 +137,10 @@ class GmsMatcher:
         self.keypoints_image1 = []
         self.keypoints_image2 = []
 
+    def _print_filt( self, msg, ch ):
+        if self.verbosity > ch:
+            print( msg )
+
     def empty_matches(self):
         self.normalized_points1 = []
         self.normalized_points2 = []
@@ -96,23 +148,34 @@ class GmsMatcher:
         self.gms_matches = []
 
     def compute_matches(self, img1, img2):
-        self.keypoints_image1, descriptors_image1 = self.descriptor.detectAndCompute(img1, np.array([]))
-        self.keypoints_image2, descriptors_image2 = self.descriptor.detectAndCompute(img2, np.array([]))
+        startKeypts = time.time()
+        self.keypoints_image1, descriptors_image1 = self.descriptor.detectAndCompute(img1, None )#np.array([]))
+        self.keypoints_image2, descriptors_image2 = self.descriptor.detectAndCompute(img2, None )#np.array([]))
+        self._print_filt( 'compute_matches(): detectAndCompute took (ms): %4.2f' %(1000.*(time.time() - startKeypts ) ), 1 )
+
         size1 = Size(img1.shape[1], img1.shape[0])
         size2 = Size(img2.shape[1], img2.shape[0])
 
         if self.gms_matches:
             self.empty_matches()
-        
+
+        startMatcher = time.time()
         all_matches = self.matcher.match(descriptors_image1, descriptors_image2)
+        # code.interact( local=locals() )
+        self._print_filt( 'compute_matches(): self.matcher.match took (ms): %4.2f' %(1000.*(time.time() - startMatcher ) ), 1 )
+
         self.normalize_points(self.keypoints_image1, size1, self.normalized_points1)
         self.normalize_points(self.keypoints_image2, size2, self.normalized_points2)
+
         self.matches_number = len(all_matches)
         self.convert_matches(all_matches, self.matches)
         self.initialize_neighbours(self.grid_neighbor_left, self.grid_size_left)
 
-        mask, num_inliers = self.get_inlier_mask(False, False)
-        print('Found', num_inliers, 'matches')
+        startVote = time.time()
+        mask, num_inliers = self.get_inlier_mask(False, False) #This is the most expensive function call, which inturn calls run()
+        self._print_filt( '%s, %s, %s' %('Found', num_inliers, 'matches'), 1 )
+        self._print_filt( 'compute_matches(): GMS Voting took (ms): %4.2f' %(1000.*(time.time() - startVote ) ), 1 )
+
 
         for i in range(len(mask)):
             if mask[i]:
@@ -327,8 +390,18 @@ class GmsMatcher:
                 cv2.circle(output, tuple(map(int, left)), 1, (0, 255, 255), 2)
                 cv2.circle(output, tuple(map(int, right)), 1, (0, 255, 0), 2)
 
+        elif drawing_type == DrawingType.POINTS_AND_TEXT:
+            for i in range(len(self.gms_matches)):
+                left = self.keypoints_image1[self.gms_matches[i].queryIdx].pt
+                right = tuple(sum(x) for x in zip(self.keypoints_image2[self.gms_matches[i].trainIdx].pt, (src1.shape[1], 0)))
+                cv2.circle(output, tuple(map(int, left)), 1, (0, 255, 255))
+                cv2.circle(output, tuple(map(int, right)), 1, (0, 255, 0) )
+                cv2.putText(output, str(i), tuple(map(int, left)), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.4, (255,0,0) )
+                cv2.putText(output, str(i), tuple(map(int, right)), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.4, (255,0,0) )
+
         cv2.imshow('show', output)
         cv2.waitKey()
+        return output
 
 
 class Size:
@@ -337,27 +410,292 @@ class Size:
         self.height = height
 
 
+
+class GmsRobe:
+    ## This class is suppose to extent the functonality of GmsMatcher. All of the
+    ## Following functions return 2xN matrix with (x,y) of matches. No image resizing
+    ##      a) match2( imC, imP )
+    ##      b) match3( imC, imP, imCm )
+    ##      c) match2_guided( imC, pt1, imP )
+    def __init__(self, descriptor=None, matcher=None, n=10000, verbosity=0):
+        """
+        descriptor : The Feature point descriptor. If it is None, we initialize a ORB
+                     extractor with 10000 features. This can be altered with the argument n.
+
+        matcher : The matcher. If None provided we initialize a brute force matcher.
+
+        verbose : if 0 will not print out message. 5 will print all messages.
+        """
+        self.gms = GmsMatcher(descriptor, matcher, n, verbosity)
+
+
+    def match2( self, imC, imP ):
+        """ Given current image(imC) and prev image(imP) returns GMS matches co-ordinates (x,y)_i
+            Essentially this is a thin wrapper around the original GmsMatcher class.
+
+            Typical usage with 240x320 images takes ~ 350 ms (Brute Force matcher)
+        """
+        matches = self.gms.compute_matches(imC, imP)
+        return self._matches_to_cords( matches, self.gms.keypoints_image1, self.gms.keypoints_image2 )
+
+    def match2_guided( self, imC, pts_C, imP ):
+        """ Given current image (imC), with pts_C 2xN as input points on imC, the
+        objective is to find these points in previous image (imP)
+
+        The way we do this is to first compute all the matches between imC and imP.
+        Then filter these matches to include only those pysically close to input points.
+
+        Typical usage with 240x320 images and pts_C ~ 50 takes 354 ms overall.
+        Part-A: Takes 352ms (Brute Force matcher)
+        Part-B: Takes 2ms
+        """
+
+        timeA = time.time()
+        gmsC, gmsP = self.match2( imC, imP )
+        # cv2.imshow( 'org GMS C--P', self.plot_point_sets( imC, gmsC, imP, gmsP ) )
+
+        print 'ElapsedA (ms): %4.2f' %(1000.0 * (time.time() - timeA ))
+
+
+        # Now go thru each of pts_C, find nn of each of pts_C in gmsC. Only retain
+        # the pair gmsC_i <--> gmsP_i if gmsC_i is within 1px of pts_C_i.
+        L = []
+        timeB = time.time()
+        for i in range( pts_C.shape[1] ):
+
+            # find nearest neighbour of pts_C_i in gmsC. TODO Consider using FLANN for this.
+            diff = gmsC - np.expand_dims( pts_C[:,i],1 ) #2xN
+            diff_norm = np.linalg.norm( diff, axis=0 ) #1xN
+            minval = diff_norm.min()
+            minarg = diff_norm.argmin() #This is essentially like 1-NN
+
+
+            if minval < 1.0 :
+                # print minval, minarg
+                L.append( minarg )
+
+        print 'ElapsedB (ms): %4.2f' %(1000.0 * (time.time() - timeB ))
+
+        # L is list of index on gmsC <--> gmsP which are found in pts_C.
+        # code.interact(local=locals() )
+        return gmsC[:,L], gmsP[:,L]
+
+
+
+    def match3( self, imC, imP, imCm ):
+        """ To find 3way correspondences. Note: The order in which the images is given is critical
+                imC  : current image
+                imP  : previous image
+                imCm : current-1 image
+
+
+                Takes about 775 ms.
+                Part-A: 727 ms (Brute Force matcher)
+                Part-B: 47 ms
+        """
+
+        # Get C<-->P and C<-->Cm
+        startA = time.time()
+        _gmsC, _gmsP = self.match2( imC, imP ) #2xN, 2xN
+        __gmsC, __gmsCm = self.match2( imC, imCm ) # This will be a larger set than _gmsC <--> _gmsP. 2xN, 2xN
+        print 'gmsrobe.match3.A took (ms): %4.2f' %(1000.*(time.time() - startA ) )
+
+
+        # print 'C<-- %d -->P' %(_gmsC.shape[1])
+        # print 'C<-- %d -->Cm' %(__gmsC.shape[1])
+
+        # r = np.random.randint( 0, __gmsC.shape[1], 50 )
+        # cv2.imshow( 'C--P',  gms.plot_point_sets( imC, _gmsC, imP, _gmsP ) )
+        # cv2.imshow( 'C--Cm', self.plot_point_sets( imC, __gmsC, imCm, __gmsCm ) )
+        # # cv2.imshow( 'C', self.plot_points_on_image(imC, __gmsC[:,r]) )
+        # # cv2.imshow( 'Cm', self.plot_points_on_image(imCm, __gmsCm[:,r]) )
+        # cv2.waitKey(0)
+
+
+
+        # loop thru _gmsC <--> _gmsCm. Find nearest cords of _gmsC_i in __gmsC.
+        startB = time.time()
+        L1 = []
+        L2 = []
+        for i in range( _gmsC.shape[1] ):
+            diff = __gmsC - np.expand_dims(  _gmsC[:,i]  ,1 ) #2xN
+            diff_norm = np.linalg.norm( diff, axis=0 ) #1xN
+            minval = diff_norm.min()
+            minarg = diff_norm.argmin() #This is essentially like 1-NN
+
+            if minval < 1.0:
+                # print i, minarg
+                L1.append(i)
+                L2.append(minarg)
+
+        print 'gmsrobe.match3.B took (ms): %4.2f' %(1000.*(time.time() - startB ) )
+        return _gmsC[:,L1], _gmsP[:,L1], __gmsCm[:,L2]
+
+
+
+
+
+
+    ##################################################
+    ################# Utilities  #####################
+    ##################################################
+    def _matches_to_cords( self, matches, kp1, kp2 ):
+        """ Given the DMatches array and keypoints, returns list of cords"""
+        N = len(matches)
+        cords_1 = np.zeros( (2,N)  )
+        cords_2 = np.zeros( (2,N)  )
+        for i in range(N):
+            left  = kp1[matches[i].queryIdx].pt
+            right = kp2[matches[i].trainIdx].pt
+
+            cords_1[0,i] = left[0]
+            cords_1[1,i] = left[1]
+
+            cords_2[0,i] = right[0]
+            cords_2[1,i] = right[1]
+
+            # print '---',i
+            # print left
+            # print right
+
+        return cords_1, cords_2
+
+
+
+    ##################################################
+    ########## Plotting / Visualization  #############
+    ##################################################
+
+
+    def plot_3way_match( self, curr_im, pts_curr, prev_im, pts_prev, curr_m_im, pts_curr_m, enable_text=True, enable_lines=False, show_random_points=-1 ):
+        """     pts_curr, pts_prev, pts_curr_m : 2xN numpy matrix
+
+                :flags:
+                enable_text: Enable/disable printing point index in image
+                enable_lines: Enable/disable lines drawing
+                show_random_points: Only show this many number of random matches. Mainly to avoid clutter.
+
+
+                returns : # grid : [ [curr, prev], [curr-1  X ] ]
+        """
+
+        print 'pts_curr.shape   ', pts_curr.shape
+        print 'pts_prev.shape   ', pts_prev.shape
+        print 'pts_curr_m.shape ', pts_curr_m.shape
+        assert( (pts_curr.shape[1] == pts_prev.shape[1]) and (pts_curr_m.shape[1] == pts_prev.shape[1]) )
+        assert( (pts_curr.shape[0] == pts_prev.shape[0]) and (pts_curr_m.shape[0] == pts_prev.shape[0]) )
+        assert( pts_curr.shape[0] == 2 )
+        # all 3 should have same number of points
+
+
+        zero_image = np.zeros( curr_im.shape, dtype='uint8' )
+        cv2.putText( zero_image, str(pts_curr.shape[1]), (10,200), cv2.FONT_HERSHEY_SIMPLEX, 2, 255 )
+
+
+        r1 = np.concatenate( ( curr_im, prev_im ), axis=1 )
+        r2 = np.concatenate( ( curr_m_im, zero_image ), axis=1 )
+        gridd = np.concatenate( (r1,r2), axis=0 )
+
+        N = pts_curr.shape[1]
+        if show_random_points < 0 or show_random_points > N:
+            spann = range(N)
+        else:
+            spann = np.random.randint( 0, N, show_random_points )
+
+        for xi in spann:
+            point_c  = tuple( np.int0(pts_curr[:,xi]) )
+            point_p  = tuple( np.int0(pts_prev[:,xi]) )
+            point_cm = tuple( np.int0(pts_curr_m[:,xi]) )
+
+
+            point_p__  = tuple( np.int0(pts_prev[:,xi]) + [curr_im.shape[1],0] )
+            point_cm__ = tuple( np.int0(pts_curr_m[:,xi]) + [0,curr_im.shape[0]] )
+
+
+            ######## C --- P
+            cv2.circle( gridd, point_c, 4, (0,255,0) )
+            cv2.circle( gridd, point_p__, 4, (0,255,0) )
+            if enable_lines:
+                cv2.line( gridd, point_c, point_p__, (255,0,0) )
+            if enable_text:
+                cv2.putText(gridd, str(xi), point_c, cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.4, (255,0,0) )
+                cv2.putText(gridd, str(xi), point_p__, cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.4, (255,0,0) )
+
+
+            ####### C --- Cm
+            cv2.circle( gridd, point_cm__, 4, (0,255,0) )
+            if enable_lines:
+                cv2.line( gridd, point_c, point_cm__, (255,30,255) )
+            if enable_text:
+                cv2.putText(gridd, str(xi), point_cm__, cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.4, (255,0,0) )
+
+
+
+
+        return gridd
+
+
+    def plot_point_sets( self, im1, pt1, im2, pt2, mask=None, enable_text=True, enable_lines=False, show_random_points=-1 ):
+        """ pt1, pt2 : 2xN array
+
+            :flags:
+            enable_text: Enable/disable printing point index in image
+            enable_lines: Enable/disable lines drawing
+            show_random_points: Only show this many number of random matches. Mainly to avoid clutter.
+
+        """
+        assert( pt1.shape[0] == 2 )
+        assert( pt2.shape[0] == 2 )
+        assert( pt1.shape[1] == pt2.shape[1] )
+
+        #TODO: if im1 and im2 are 2 channel, this might cause issues
+
+        xcanvas = np.concatenate( (im1, im2), axis=1 )
+        N = pt1.shape[1]
+        if show_random_points < 0 or show_random_points > N:
+            spann = range(N)
+        else:
+            spann = np.random.randint( 0, N, show_random_points )
+
+        for xi in spann:
+            if (mask is not None) and (mask[xi,0] == 0):
+                continue
+
+            point_left =  tuple( np.int0(pt1[:,xi])  )
+            point_right = tuple(np.int0(pt2[:,xi])   )
+            point_right__ = tuple(np.int0(pt2[:,xi]) + [im1.shape[1],0])
+            cv2.circle( xcanvas, point_left, 4, (255,0,255) )
+            cv2.circle( xcanvas, point_right__, 4, (255,0,255) )
+
+            if enable_lines:
+                cv2.line( xcanvas, point_left, point_right__, (255,0,0) )
+
+            if enable_text:
+                cv2.putText(xcanvas, str(xi), point_left, cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.4, (255,0,0) )
+                cv2.putText(xcanvas, str(xi), point_right__, cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.4, (255,0,0) )
+
+
+        return xcanvas
+
+    def plot_points_on_image( self, img, pts, enable_text=True ):
+        """ img : Image; pts: 2xN array """
+
+        xcanvas = img.copy()
+        for xi in range( pts.shape[1] ):
+            point_ =  tuple( np.int0(pts[:,xi])  )
+            cv2.circle( xcanvas, point_, 4, (255,0,255) )
+
+            if enable_text:
+                cv2.putText(xcanvas, str(xi), point_, cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.4, (255,0,0) )
+
+        return xcanvas
+
+
+
+
+
+
 def imresize(src, height):
     ratio = src.shape[0] * 1.0/height
     width = int(src.shape[1] * 1.0/ratio)
     return cv2.resize(src, (width, height))
-
-
-if __name__ == '__main__':
-    img1 = cv2.imread("../data/nn_left.jpg")
-    img2 = cv2.imread("../data/nn_right.jpg")
-
-    img1 = imresize(img1, 480)
-    img2 = imresize(img2, 480)
-
-    orb = cv2.ORB_create(10000)
-    orb.setFastThreshold(0)
-    if cv2.__version__.startswith('3'):
-        matcher = cv2.BFMatcher(cv2.NORM_HAMMING)
-    else:
-        matcher = cv2.BFMatcher_create(cv2.NORM_HAMMING)
-    gms = GmsMatcher(orb, matcher)
-
-    matches = gms.compute_matches(img1, img2)
-    gms.draw_matches(img1, img2, DrawingType.ONLY_LINES)
-

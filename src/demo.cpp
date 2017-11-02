@@ -1,6 +1,6 @@
 // GridMatch.cpp : Defines the entry point for the console application.
 
-//#define USE_GPU 
+//#define USE_GPU
 
 #include "Header.h"
 #include "gms_matcher.h"
@@ -8,8 +8,11 @@
 void GmsMatch(Mat &img1, Mat &img2);
 
 void runImagePair(){
-	Mat img1 = imread("../data/nn_left.jpg");
-	Mat img2 = imread("../data/nn_right.jpg");
+	// Mat img1 = imread("../data/nn_left.jpg");
+	// Mat img2 = imread("../data/nn_right.jpg");
+
+	Mat img1 = imread("../data/kf_1140.png");
+	Mat img2 = imread("../data/kf_2583.png");
 
 	imresize(img1, 480);
 	imresize(img2, 480);
@@ -32,12 +35,15 @@ int main()
 
 
 void GmsMatch(Mat &img1, Mat &img2){
+
 	vector<KeyPoint> kp1, kp2;
 	Mat d1, d2;
 	vector<DMatch> matches_all, matches_gms;
 
 	Ptr<ORB> orb = ORB::create(10000);
+
 	orb->setFastThreshold(0);
+
 	orb->detectAndCompute(img1, Mat(), kp1, d1);
 	orb->detectAndCompute(img2, Mat(), kp2, d2);
 
@@ -49,6 +55,7 @@ void GmsMatch(Mat &img1, Mat &img2){
 	BFMatcher matcher(NORM_HAMMING);
 	matcher.match(d1, d2, matches_all);
 #endif
+	cout << "BFMatcher : " << t1.elapsed() << endl;
 
 	// GMS filter
 	int num_inliers = 0;
@@ -67,9 +74,12 @@ void GmsMatch(Mat &img1, Mat &img2){
 		}
 	}
 
-	Mat show = DrawInlier(img1, img2, kp1, kp2, matches_gms, 1);
+	cout << "Elapsed time c++: (sec)" << t.elapsed() << endl;
+
+
+	Mat show = DrawInlier(img1, img2, kp1, kp2, matches_gms, 3);
 	imshow("show", show);
 	waitKey();
+	cout << "Write file : output.png\n";
+	imwrite( "output.png", show );
 }
-
-

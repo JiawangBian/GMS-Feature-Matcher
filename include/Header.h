@@ -9,6 +9,7 @@
 #include <vector>
 #include <iostream>
 #include <ctime>
+#include <string>
 using namespace std;
 using namespace cv;
 
@@ -16,4 +17,3 @@ using namespace cv;
 	#include <opencv2/cudafeatures2d.hpp>
 	using cuda::GpuMat;
 #endif
-

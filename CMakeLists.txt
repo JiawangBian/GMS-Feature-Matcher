@@ -1,13 +1,14 @@
 cmake_minimum_required(VERSION 2.8)
 project( gms_match_demo)
+set( CMAKE_CXX_STANDARD 11 )
 
-# OpenCV 
+# OpenCV
 find_package( OpenCV REQUIRED )
 
-# 
-include_directories( 
+#
+include_directories(
  include
-${OpenCV_INCLUDE_DIRS} 
+${OpenCV_INCLUDE_DIRS}
 )
 
 

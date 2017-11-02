@@ -3,7 +3,7 @@
 
 #define THRESH_FACTOR 6
 
-// 8 possible rotation and each one is 3 X 3 
+// 8 possible rotation and each one is 3 X 3
 const int mRotationPatterns[8][9] = {
 	1,2,3,
 	4,5,6,
@@ -45,8 +45,8 @@ const double mScaleRatios[5] = { 1.0, 1.0 / 2, 1.0 / sqrt(2.0), sqrt(2.0), 2.0 }
 class gms_matcher
 {
 public:
-	// OpenCV Keypoints & Correspond Image Size & Nearest Neighbor Matches 
-	gms_matcher(const vector<KeyPoint> &vkp1, const Size size1, const vector<KeyPoint> &vkp2, const Size size2, const vector<DMatch> &vDMatches) 
+	// OpenCV Keypoints & Correspond Image Size & Nearest Neighbor Matches
+	gms_matcher(const vector<KeyPoint> &vkp1, const Size size1, const vector<KeyPoint> &vkp2, const Size size2, const vector<DMatch> &vDMatches)
 	{
 		// Input initialize
 		NormalizePoints(vkp1, size1, mvP1);
@@ -58,7 +58,7 @@ public:
 		mGridSizeLeft = Size(20, 20);
 		mGridNumberLeft = mGridSizeLeft.width * mGridSizeLeft.height;
 
-		// Initialize the neihbor of left grid 
+		// Initialize the neihbor of left grid
 		mGridNeighborLeft = Mat::zeros(mGridNumberLeft, 9, CV_32SC1);
 		InitalizeNiehbors(mGridNeighborLeft, mGridSizeLeft);
 	};
@@ -87,14 +87,14 @@ private:
 	// value  : how many matches from idx_left to idx_right
 	Mat mMotionStatistics;
 
-	// 
+	//
 	vector<int> mNumberPointsInPerCellLeft;
 
 	// Inldex  : grid_idx_left
 	// Value   : grid_idx_right
 	vector<int> mCellPairs;
 
-	// Every Matches has a cell-pair 
+	// Every Matches has a cell-pair
 	// first  : grid_idx_left
 	// second : grid_idx_right
 	vector<pair<int, int> > mvMatchPairs;
@@ -110,7 +110,7 @@ private:
 public:
 
 	// Get Inlier Mask
-	// Return number of inliers 
+	// Return number of inliers
 	int GetInlierMask(vector<bool> &vbInliers, bool WithScale = false, bool WithRotation = false);
 
 private:
@@ -177,7 +177,7 @@ private:
 		return x + y * mGridSizeRight.width;
 	}
 
-	// Assign Matches to Cell Pairs 
+	// Assign Matches to Cell Pairs
 	void AssignMatchPairs(int GridType);
 
 	// Verify Cell Pairs
@@ -193,7 +193,7 @@ private:
 		for (int yi = -1; yi <= 1; yi++)
 		{
 			for (int xi = -1; xi <= 1; xi++)
-			{	
+			{
 				int idx_xx = idx_x + xi;
 				int idx_yy = idx_y + yi;
 
@@ -222,13 +222,13 @@ private:
 		mGridSizeRight.height = mGridSizeLeft.height * mScaleRatios[Scale];
 		mGridNumberRight = mGridSizeRight.width * mGridSizeRight.height;
 
-		// Initialize the neihbor of right grid 
+		// Initialize the neihbor of right grid
 		mGridNeighborRight = Mat::zeros(mGridNumberRight, 9, CV_32SC1);
 		InitalizeNiehbors(mGridNeighborRight, mGridSizeRight);
 	}
 
 
-	// Run 
+	// Run
 	int run(int RotationType);
 };
 
@@ -292,7 +292,7 @@ int gms_matcher::GetInlierMask(vector<bool> &vbInliers, bool WithScale, bool Wit
 				vbInliers = mvbInlierMask;
 				max_inlier = num_inlier;
 			}
-			
+
 		}
 		return max_inlier;
 	}
@@ -356,7 +356,7 @@ void gms_matcher::VerifyCellPairs(int RotationType) {
 		int idx_grid_rt = mCellPairs[i];
 
 		const int *NB9_lt = mGridNeighborLeft.ptr<int>(i);
-		const int *NB9_rt = mGridNeighborRight.ptr<int>(idx_grid_rt); 
+		const int *NB9_rt = mGridNeighborRight.ptr<int>(idx_grid_rt);
 
 		int score = 0;
 		double thresh = 0;
@@ -389,13 +389,13 @@ int gms_matcher::run(int RotationType) {
 	mMotionStatistics = Mat::zeros(mGridNumberLeft, mGridNumberRight, CV_32SC1);
 	mvMatchPairs.assign(mNumberMatches, pair<int, int>(0, 0));
 
-	for (int GridType = 1; GridType <= 4; GridType++) 
+	for (int GridType = 1; GridType <= 4; GridType++)
 	{
 		// initialize
 		mMotionStatistics.setTo(0);
 		mCellPairs.assign(mGridNumberLeft, -1);
 		mNumberPointsInPerCellLeft.assign(mGridNumberLeft, 0);
-		
+
 		AssignMatchPairs(GridType);
 		VerifyCellPairs(RotationType);
 
@@ -421,7 +421,7 @@ inline Mat DrawInlier(Mat &src1, Mat &src2, vector<KeyPoint> &kpt1, vector<KeyPo
 	src1.copyTo(output(Rect(0, 0, src1.cols, src1.rows)));
 	src2.copyTo(output(Rect(src1.cols, 0, src2.cols, src2.rows)));
 
-	if (type == 1)
+	if (type == 1) // Only Lines
 	{
 		for (size_t i = 0; i < inlier.size(); i++)
 		{
@@ -430,7 +430,7 @@ inline Mat DrawInlier(Mat &src1, Mat &src2, vector<KeyPoint> &kpt1, vector<KeyPo
 			line(output, left, right, Scalar(0, 255, 255));
 		}
 	}
-	else if (type == 2)
+	else if (type == 2) // Lines and Circles
 	{
 		for (size_t i = 0; i < inlier.size(); i++)
 		{
@@ -447,6 +447,20 @@ inline Mat DrawInlier(Mat &src1, Mat &src2, vector<KeyPoint> &kpt1, vector<KeyPo
 			circle(output, right, 1, Scalar(0, 255, 0), 2);
 		}
 	}
+	else // Circles and Text
+	{
+		for (size_t i = 0; i < inlier.size(); i++)
+		{
+			Point2f left = kpt1[inlier[i].queryIdx].pt;
+			Point2f right = (kpt2[inlier[i].trainIdx].pt + Point2f((float)src1.cols, 0.f));
+			circle(output, left, 1, Scalar(0, 255, 255), 2);
+			circle(output, right, 1, Scalar(0, 255, 0), 2);
+
+			cv::putText( output, to_string(i), left, cv::FONT_HERSHEY_COMPLEX_SMALL, 0.3, cv::Scalar(255,0,255)  );
+			cv::putText( output, to_string(i), right, cv::FONT_HERSHEY_COMPLEX_SMALL, 0.3, cv::Scalar(255,0,255)  );
+
+		}
+	}
 
 	return output;
 }
@@ -456,7 +470,3 @@ inline void imresize(Mat &src, int height) {
 	int width = static_cast<int>(src.cols * 1.0 / ratio);
 	resize(src, src, Size(width, height));
 }
-
-
-
-
