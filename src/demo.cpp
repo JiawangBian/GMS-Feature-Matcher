@@ -38,6 +38,12 @@ void GmsMatch(Mat &img1, Mat &img2){
 
 	Ptr<ORB> orb = ORB::create(10000);
 	orb->setFastThreshold(0);
+	
+	if(img1.rows * img1.cols > 480 * 640 ){
+		orb->setMaxFeatures(100000);
+		orb->setFastThreshold(5);
+	}
+	
 	orb->detectAndCompute(img1, Mat(), kp1, d1);
 	orb->detectAndCompute(img2, Mat(), kp2, d2);
 
