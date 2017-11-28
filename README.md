@@ -37,16 +37,20 @@ Python Example:
 Tune Parameters:
 
 	In demo.cpp
-		1.#define USE_GPU" will need gpu cudafeatures2d module for nearest neighbor match, 
-			using cpu match by commenting it.
+		1.	#define USE_GPU" (need cudafeatures2d module) 
+				using cpu mode by commenting it.
+				
+		2.	For high-resolution images, we suggest using 100K features with setFastThreshod(5);
+		
+		3.	For low-resolution (like VGA) images, we suggest using 10K features with setFastThreshod(0);
 	
 	In gms_matcher.h
 				
-		2.	#define THRESH_FACTOR 6			// factor for calculating threshold
-				The higher, the less matches, vice verse
+		2.	#define THRESH_FACTOR 6			
+				The higher, the less matches。
 				
 		3. 	int GetInlierMask(vector<bool> &vbInliers, bool WithScale = false, bool WithRotation = false)
-				You can open multi-scale and rotation if your image pair contains that. 
+				Set WithScale to be true for unordered image matching and false for video matching.
 				
 
 ## If you like this work, please cite our paper
