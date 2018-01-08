@@ -170,7 +170,7 @@ class GmsMatcher:
                 return vb_inliers, max_inlier
             else:
                 return self.inlier_mask, max_inlier
-        elif with_scale and not with_rotation:
+        elif with_rotation and not with_scale:
             vb_inliers = []
             for rotation_type in range(1, 9):
                 num_inlier = self.run(rotation_type)
