@@ -266,6 +266,7 @@ int gms_matcher::GetInlierMask(vector<bool> &vbInliers, bool WithScale, bool Wit
 
 	if (WithRotation && !WithScale)
 	{
+		SetScale(0);
 		for (int RotationType = 1; RotationType <= 8; RotationType++)
 		{
 			int num_inlier = run(RotationType);
