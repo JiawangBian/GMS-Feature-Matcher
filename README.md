@@ -13,6 +13,13 @@
 [[Project Page](http://jwbian.net/gms)] [[pdf](http://jwbian.net/Papers/GMS_CVPR17.pdf)] [[Bib](http://jwbian.net/Papers/bian2017gms.txt)] [[Code](https://github.com/JiawangBian/GMS-Feature-Matcher)] [[Youtube](https://youtu.be/3SlBqspLbxI)]
 
 
+## Other Resouces
+
+  The method has been integrated into OpenCV library (see xfeatures2d in [opencv_contrib](https://github.com/opencv/opencv_contrib)).
+
+  The paper was selected and reviewed by [Computer Vision News](http://www.rsipvision.com/ComputerVisionNews-2017August/#48).
+
+  More experiments are shown in [MatchBench](https://jwbian.net/matchbench).
 	
 ## Usage
 
