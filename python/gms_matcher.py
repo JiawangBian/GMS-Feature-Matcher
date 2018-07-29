@@ -151,9 +151,9 @@ class GmsMatcher:
 
     def get_inlier_mask(self, with_scale, with_rotation):
         max_inlier = 0
+        self.set_scale(0)
 
         if not with_scale and not with_rotation:
-            self.set_scale(0)
             max_inlier = self.run(1)
             return self.inlier_mask, max_inlier
         elif with_scale and with_rotation:
