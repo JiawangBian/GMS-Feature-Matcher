@@ -1,13 +1,16 @@
-// GridMatch.cpp : Defines the entry point for the console application.
-
-//#define USE_GPU 
-
-#include "Header.h"
 #include "gms_matcher.h"
 
-void GmsMatch(Mat &img1, Mat &img2);
+//#define USE_GPU 
+#ifdef USE_GPU
+#include <opencv2/cudafeatures2d.hpp>
+using cuda::GpuMat;
+#endif
 
-void runImagePair(){
+void imresize(Mat &src, int height);
+void GmsMatch(Mat &img1, Mat &img2);
+Mat DrawInlier(Mat &src1, Mat &src2, vector<KeyPoint> &kpt1, vector<KeyPoint> &kpt2, vector<DMatch> &inlier, int type);
+
+void runImagePair() {
 	Mat img1 = imread("../data/nn_left.jpg");
 	Mat img2 = imread("../data/nn_right.jpg");
 
@@ -17,12 +20,11 @@ void runImagePair(){
 	GmsMatch(img1, img2);
 }
 
-
 int main()
 {
 #ifdef USE_GPU
 	int flag = cuda::getCudaEnabledDeviceCount();
-	if (flag != 0){ cuda::setDevice(0); }
+	if (flag != 0) { cuda::setDevice(0); }
 #endif // USE_GPU
 
 	runImagePair();
@@ -30,20 +32,19 @@ int main()
 	return 0;
 }
 
-
-void GmsMatch(Mat &img1, Mat &img2){
+void GmsMatch(Mat &img1, Mat &img2) {
 	vector<KeyPoint> kp1, kp2;
 	Mat d1, d2;
 	vector<DMatch> matches_all, matches_gms;
 
 	Ptr<ORB> orb = ORB::create(10000);
 	orb->setFastThreshold(0);
-	
-	if(img1.rows * img1.cols > 480 * 640 ){
+
+	if (img1.rows * img1.cols > 480 * 640) {
 		orb->setMaxFeatures(100000);
 		orb->setFastThreshold(5);
 	}
-	
+
 	orb->detectAndCompute(img1, Mat(), kp1, d1);
 	orb->detectAndCompute(img2, Mat(), kp2, d2);
 
@@ -59,7 +60,7 @@ void GmsMatch(Mat &img1, Mat &img2){
 	// GMS filter
 	int num_inliers = 0;
 	std::vector<bool> vbInliers;
-	gms_matcher gms(kp1,img1.size(), kp2,img2.size(), matches_all);
+	gms_matcher gms(kp1, img1.size(), kp2, img2.size(), matches_all);
 	num_inliers = gms.GetInlierMask(vbInliers, false, false);
 
 	cout << "Get total " << num_inliers << " matches." << endl;
@@ -78,4 +79,45 @@ void GmsMatch(Mat &img1, Mat &img2){
 	waitKey();
 }
 
+void imresize(Mat &src, int height) {
+	double ratio = src.rows * 1.0 / height;
+	int width = static_cast<int>(src.cols * 1.0 / ratio);
+	resize(src, src, Size(width, height));
+}
 
+Mat DrawInlier(Mat &src1, Mat &src2, vector<KeyPoint> &kpt1, vector<KeyPoint> &kpt2, vector<DMatch> &inlier, int type) {
+	const int height = max(src1.rows, src2.rows);
+	const int width = src1.cols + src2.cols;
+	Mat output(height, width, CV_8UC3, Scalar(0, 0, 0));
+	src1.copyTo(output(Rect(0, 0, src1.cols, src1.rows)));
+	src2.copyTo(output(Rect(src1.cols, 0, src2.cols, src2.rows)));
+
+	if (type == 1)
+	{
+		for (size_t i = 0; i < inlier.size(); i++)
+		{
+			Point2f left = kpt1[inlier[i].queryIdx].pt;
+			Point2f right = (kpt2[inlier[i].trainIdx].pt + Point2f((float)src1.cols, 0.f));
+			line(output, left, right, Scalar(0, 255, 255));
+		}
+	}
+	else if (type == 2)
+	{
+		for (size_t i = 0; i < inlier.size(); i++)
+		{
+			Point2f left = kpt1[inlier[i].queryIdx].pt;
+			Point2f right = (kpt2[inlier[i].trainIdx].pt + Point2f((float)src1.cols, 0.f));
+			line(output, left, right, Scalar(255, 0, 0));
+		}
+
+		for (size_t i = 0; i < inlier.size(); i++)
+		{
+			Point2f left = kpt1[inlier[i].queryIdx].pt;
+			Point2f right = (kpt2[inlier[i].trainIdx].pt + Point2f((float)src1.cols, 0.f));
+			circle(output, left, 1, Scalar(0, 255, 255), 2);
+			circle(output, right, 1, Scalar(0, 255, 0), 2);
+		}
+	}
+
+	return output;
+}
