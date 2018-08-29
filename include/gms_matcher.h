@@ -1,5 +1,10 @@
 #pragma once
-#include "Header.h"
+#include <opencv2/opencv.hpp>
+#include <vector>
+#include <iostream>
+#include <ctime>
+using namespace std;
+using namespace cv;
 
 #define THRESH_FACTOR 6
 
@@ -64,7 +69,6 @@ public:
 	};
 	~gms_matcher() {};
 
-
 private:
 
 	// Normalized Points
@@ -80,7 +84,6 @@ private:
 	Size mGridSizeLeft, mGridSizeRight;
 	int mGridNumberLeft;
 	int mGridNumberRight;
-
 
 	// x	  : left grid idx
 	// y      :  right grid idx
@@ -105,7 +108,6 @@ private:
 	//
 	Mat mGridNeighborLeft;
 	Mat mGridNeighborRight;
-
 
 public:
 
@@ -144,27 +146,37 @@ private:
 		if (type == 1) {
 			x = floor(pt.x * mGridSizeLeft.width);
 			y = floor(pt.y * mGridSizeLeft.height);
+
+			if (y >= mGridSizeLeft.height || x >= mGridSizeLeft.width){
+				return -1;
+			}
 		}
 
 		if (type == 2) {
 			x = floor(pt.x * mGridSizeLeft.width + 0.5);
 			y = floor(pt.y * mGridSizeLeft.height);
+
+			if (x >= mGridSizeLeft.width || x < 1) {
+				return -1;
+			}
 		}
 
 		if (type == 3) {
 			x = floor(pt.x * mGridSizeLeft.width);
 			y = floor(pt.y * mGridSizeLeft.height + 0.5);
+
+			if (y >= mGridSizeLeft.height || y < 1) {
+				return -1;
+			}
 		}
 
 		if (type == 4) {
 			x = floor(pt.x * mGridSizeLeft.width + 0.5);
 			y = floor(pt.y * mGridSizeLeft.height + 0.5);
-		}
 
-
-		if (x >= mGridSizeLeft.width || y >= mGridSizeLeft.height)
-		{
-			return -1;
+			if (y >= mGridSizeLeft.height || y < 1 || x >= mGridSizeLeft.width || x < 1) {
+				return -1;
+			}
 		}
 
 		return x + y * mGridSizeLeft.width;
@@ -206,7 +218,6 @@ private:
 		return NB9;
 	}
 
-	//
 	void InitalizeNiehbors(Mat &neighbor, const Size& GridSize) {
 		for (int i = 0; i < neighbor.rows; i++)
 		{
@@ -227,11 +238,9 @@ private:
 		InitalizeNiehbors(mGridNeighborRight, mGridSizeRight);
 	}
 
-
 	// Run 
 	int run(int RotationType);
 };
-
 
 int gms_matcher::GetInlierMask(vector<bool> &vbInliers, bool WithScale, bool WithRotation) {
 
@@ -301,8 +310,6 @@ int gms_matcher::GetInlierMask(vector<bool> &vbInliers, bool WithScale, bool Wit
 	return max_inlier;
 }
 
-
-
 void gms_matcher::AssignMatchPairs(int GridType) {
 
 	for (size_t i = 0; i < mNumberMatches; i++)
@@ -329,7 +336,6 @@ void gms_matcher::AssignMatchPairs(int GridType) {
 	}
 
 }
-
 
 void gms_matcher::VerifyCellPairs(int RotationType) {
 
@@ -379,7 +385,6 @@ void gms_matcher::VerifyCellPairs(int RotationType) {
 		if (score < thresh)
 			mCellPairs[i] = -2;
 	}
-
 }
 
 int gms_matcher::run(int RotationType) {
@@ -403,61 +408,14 @@ int gms_matcher::run(int RotationType) {
 		// Mark inliers
 		for (size_t i = 0; i < mNumberMatches; i++)
 		{
-			if (mCellPairs[mvMatchPairs[i].first] == mvMatchPairs[i].second)
-			{
-				mvbInlierMask[i] = true;
+			if (mvMatchPairs[i].first >= 0) {
+				if (mCellPairs[mvMatchPairs[i].first] == mvMatchPairs[i].second)
+				{
+					mvbInlierMask[i] = true;
+				}
 			}
 		}
 	}
 	int num_inlier = sum(mvbInlierMask)[0];
 	return num_inlier;
-
 }
-
-// utility
-inline Mat DrawInlier(Mat &src1, Mat &src2, vector<KeyPoint> &kpt1, vector<KeyPoint> &kpt2, vector<DMatch> &inlier, int type) {
-	const int height = max(src1.rows, src2.rows);
-	const int width = src1.cols + src2.cols;
-	Mat output(height, width, CV_8UC3, Scalar(0, 0, 0));
-	src1.copyTo(output(Rect(0, 0, src1.cols, src1.rows)));
-	src2.copyTo(output(Rect(src1.cols, 0, src2.cols, src2.rows)));
-
-	if (type == 1)
-	{
-		for (size_t i = 0; i < inlier.size(); i++)
-		{
-			Point2f left = kpt1[inlier[i].queryIdx].pt;
-			Point2f right = (kpt2[inlier[i].trainIdx].pt + Point2f((float)src1.cols, 0.f));
-			line(output, left, right, Scalar(0, 255, 255));
-		}
-	}
-	else if (type == 2)
-	{
-		for (size_t i = 0; i < inlier.size(); i++)
-		{
-			Point2f left = kpt1[inlier[i].queryIdx].pt;
-			Point2f right = (kpt2[inlier[i].trainIdx].pt + Point2f((float)src1.cols, 0.f));
-			line(output, left, right, Scalar(255, 0, 0));
-		}
-
-		for (size_t i = 0; i < inlier.size(); i++)
-		{
-			Point2f left = kpt1[inlier[i].queryIdx].pt;
-			Point2f right = (kpt2[inlier[i].trainIdx].pt + Point2f((float)src1.cols, 0.f));
-			circle(output, left, 1, Scalar(0, 255, 255), 2);
-			circle(output, right, 1, Scalar(0, 255, 0), 2);
-		}
-	}
-
-	return output;
-}
-
-inline void imresize(Mat &src, int height) {
-	double ratio = src.rows * 1.0 / height;
-	int width = static_cast<int>(src.cols * 1.0 / ratio);
-	resize(src, src, Size(width, height));
-}
-
-
-
-
