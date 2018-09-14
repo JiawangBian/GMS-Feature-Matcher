@@ -12,7 +12,7 @@ if nargin < 4
 end
 
 if nargin < 3
-    NumP = 10000;
+    NumP = 100000;
 end
     
 [X1, X2] = MexGMS(I1gray, I2gray, NumP, scale, rotate);

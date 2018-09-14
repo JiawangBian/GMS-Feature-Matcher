@@ -4,7 +4,7 @@
 
 % opencv path
 OpenCV = 'C:/SDK/OpenCV/'; %Input Your OpenCV Path
-version = '320'; % Input Your OpenCV Version
+version = '310'; % Input Your OpenCV Version
 
 IPath = ['-I' OpenCV 'include'];
 LPath = ['-L' OpenCV 'x64/vc14/lib'];

@@ -22,18 +22,17 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	memcpy(img2.data, data2, sizeof(uchar) * Img2h * Img2w);
 	img2 = img2.t();
 
-	// Number of Points: 10000 (default)
+	// Number of Points: 100000 (default)
 	const double *data3 = (double *)mxGetPr(prhs[2]);
 	int num_keypoint = *data3;
 	
-	// Scale or Not: not(default)
+	// Scale or Not: not (default)
 	const double *data4 = (double *)mxGetPr(prhs[3]);
 	int scale = *data4;
 	
-	// Rotation or Not: not(default)
+	// Rotation or Not: not (default)
 	const double *data5 = (double *)mxGetPr(prhs[4]);
 	int rotate = *data5;
-	
 	
 	// orb
 	vector<KeyPoint> kp1, kp2;
