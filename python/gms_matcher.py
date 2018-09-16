@@ -39,6 +39,10 @@ ROTATION_PATTERNS = [
      1, 5, 9,
      4, 7, 8]]
 
+class Size:
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
 
 class DrawingType(Enum):
     ONLY_LINES = 1
@@ -331,26 +335,11 @@ class GmsMatcher:
         cv2.waitKey()
 
 
-class Size:
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
-
-
-def imresize(src, height):
-    ratio = src.shape[0] * 1.0/height
-    width = int(src.shape[1] * 1.0/ratio)
-    return cv2.resize(src, (width, height))
-
-
 if __name__ == '__main__':
-    img1 = cv2.imread("../data/nn_left.jpg")
-    img2 = cv2.imread("../data/nn_right.jpg")
+    img1 = cv2.imread("../data/01.jpg")
+    img2 = cv2.imread("../data/02.jpg")
 
-    img1 = imresize(img1, 480)
-    img2 = imresize(img2, 480)
-
-    orb = cv2.ORB_create(10000)
+    orb = cv2.ORB_create(100000)
     orb.setFastThreshold(0)
     if cv2.__version__.startswith('3'):
         matcher = cv2.BFMatcher(cv2.NORM_HAMMING)
@@ -360,4 +349,3 @@ if __name__ == '__main__':
 
     matches = gms.compute_matches(img1, img2)
     gms.draw_matches(img1, img2, DrawingType.ONLY_LINES)
-
