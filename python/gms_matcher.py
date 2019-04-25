@@ -2,6 +2,8 @@ import math
 from enum import Enum
 
 import cv2
+cv2.ocl.setUseOpenCL(False)
+
 import numpy as np
 
 THRESHOLD_FACTOR = 6
@@ -47,6 +49,9 @@ class Size:
 class DrawingType(Enum):
     ONLY_LINES = 1
     LINES_AND_POINTS = 2
+    COLOR_CODED_POINTS_X = 3
+    COLOR_CODED_POINTS_Y = 4
+    COLOR_CODED_POINTS_XpY = 5
 
 
 class GmsMatcher:
@@ -107,7 +112,7 @@ class GmsMatcher:
 
         if self.gms_matches:
             self.empty_matches()
-        
+
         all_matches = self.matcher.match(descriptors_image1, descriptors_image2)
         self.normalize_points(self.keypoints_image1, size1, self.normalized_points1)
         self.normalize_points(self.keypoints_image2, size2, self.normalized_points2)
@@ -331,6 +336,26 @@ class GmsMatcher:
                 cv2.circle(output, tuple(map(int, left)), 1, (0, 255, 255), 2)
                 cv2.circle(output, tuple(map(int, right)), 1, (0, 255, 0), 2)
 
+        elif drawing_type == DrawingType.COLOR_CODED_POINTS_X or drawing_type == DrawingType.COLOR_CODED_POINTS_Y or drawing_type == DrawingType.COLOR_CODED_POINTS_XpY :
+            _1_255 = np.expand_dims( np.array( range( 0, 256 ), dtype='uint8' ), 1 )
+            _colormap = cv2.applyColorMap(_1_255, cv2.COLORMAP_HSV)
+
+            for i in range(len(self.gms_matches)):
+                left = self.keypoints_image1[self.gms_matches[i].queryIdx].pt
+                right = tuple(sum(x) for x in zip(self.keypoints_image2[self.gms_matches[i].trainIdx].pt, (src1.shape[1], 0)))
+
+                if drawing_type == DrawingType.COLOR_CODED_POINTS_X:
+                    colormap_idx = int(left[0] * 256. / src1.shape[1] ) # x-gradient
+                if drawing_type == DrawingType.COLOR_CODED_POINTS_Y:
+                    colormap_idx = int(left[1] * 256. / src1.shape[0] ) # y-gradient
+                if drawing_type == DrawingType.COLOR_CODED_POINTS_XpY:
+                    colormap_idx = int( (left[0] - src1.shape[1]*.5 + left[1] - src1.shape[0]*.5) * 256. / (src1.shape[0]*.5 + src1.shape[1]*.5) ) # manhattan gradient
+
+                color = tuple( map(int, _colormap[ colormap_idx,0,: ]) )
+                cv2.circle(output, tuple(map(int, left)), 1, color, 2)
+                cv2.circle(output, tuple(map(int, right)), 1, color, 2)
+
+
         cv2.imshow('show', output)
         cv2.waitKey()
 
@@ -348,4 +373,5 @@ if __name__ == '__main__':
     gms = GmsMatcher(orb, matcher)
 
     matches = gms.compute_matches(img1, img2)
-    gms.draw_matches(img1, img2, DrawingType.ONLY_LINES)
+    # gms.draw_matches(img1, img2, DrawingType.ONLY_LINES)
+    gms.draw_matches(img1, img2, DrawingType.COLOR_CODED_POINTS_XpY)
