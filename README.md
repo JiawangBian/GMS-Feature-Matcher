@@ -19,7 +19,7 @@
 
   The paper was selected and reviewed by [Computer Vision News](http://www.rsipvision.com/ComputerVisionNews-2017August/#48).
 
-  More experiments are shown in [MatchBench](https://jwbian.net/matchbench).
+  More experiments are shown in [FM-Bench](https://jwbian.net/fm-bench).
 	
 ## Usage
 
@@ -60,7 +60,7 @@ Tune Parameters:
 				Set WithScale to be true for unordered image matching and false for video matching.
 				
 
-## If you like this work, please cite our paper
+## If you use this work, please cite our paper
 	@inproceedings{bian2017gms,
  	  title={GMS: Grid-based Motion Statistics for Fast, Ultra-robust Feature Correspondence},
   	  author={JiaWang Bian and Wen-Yan Lin and Yasuyuki Matsushita and Sai-Kit Yeung and Tan Dat Nguyen and Ming-Ming Cheng},
