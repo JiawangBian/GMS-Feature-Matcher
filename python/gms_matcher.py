@@ -364,7 +364,7 @@ if __name__ == '__main__':
     img1 = cv2.imread("../data/01.jpg")
     img2 = cv2.imread("../data/02.jpg")
 
-    orb = cv2.ORB_create(100000)
+    orb = cv2.ORB_create(10000)
     orb.setFastThreshold(0)
     if cv2.__version__.startswith('3'):
         matcher = cv2.BFMatcher(cv2.NORM_HAMMING)
