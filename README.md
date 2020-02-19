@@ -64,6 +64,13 @@ Tune Parameters:
   	  booktitle={IEEE Conference on Computer Vision and Pattern Recognition},
   	  year={2017}
 	}
+	
+	@article{Bian2019gms,
+  		title={{GMS}: Grid-based Motion Statistics for Fast, Ultra-Robust Feature Correspondence},
+  		author={Bian, JiaWang and Lin, Wen-Yan and Liu, Yun and Zhang, Le and Yeung, Sai-Kit and Cheng, Ming-Ming and Reid, Ian},
+  		journal={International Journal of Computer Vision (IJCV)},
+  		year={2019}
+	}
 
 
 
