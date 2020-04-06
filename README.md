@@ -40,15 +40,15 @@ Requirement:
 
 C++ Example:
 
-	Image pair demo in demo.cpp.
+	See demo.cpp.
 	
 Matlab Example
 	
-	You should compile the code with opencv library firstly(see the 'Compile.m').
+	Go to "matlab" folder. Compile the code with OpenCV ('Compile.m'), and run 'demo.m'.
 
 Python Example:
 	
-	Use Python3 to run gms_matcher script.
+	Go to "python" folder. Run "python3 gms_matcher.py".
 	
 Tune Parameters:
 
@@ -61,12 +61,13 @@ Tune Parameters:
 	
 	In gms_matcher.h
 				
-		2.	#define THRESH_FACTOR 6			
+		2.	#define THRESH_FACTOR 6		
 				Set it higher for more input matches, and lower for the fewer input matches.
-				Often 6 for ORB raw matches, and 4 or 3 for SIFT matches (after ratio test).
+				Often 6 for ORB all matches, and 4 or 3 for SIFT matches (after ratio test).
 				
 		3. 	int GetInlierMask(vector<bool> &vbInliers, bool WithScale = false, bool WithRotation = false)
 				Set WithScale to be true for wide-baseline matching and false for video matching.
+				Set WithRotation to be true if images have significant reative rotations.
 				
 
 ## Related projects
