@@ -12,12 +12,13 @@
 
 ## Other Resouces
 
-  The method has been integrated into OpenCV library (see xfeatures2d in [opencv_contrib](https://github.com/opencv/opencv_contrib)).
+  The method has been integrated into OpenCV library (see [xfeatures2d.matchGMS](https://docs.opencv.org/master/db/dd9/group__xfeatures2d__match.html)).
+  
+  More experiments are shown in [FM-Bench](https://jwbian.net/fm-bench).
 
   The paper was selected and reviewed by [Computer Vision News](http://www.rsipvision.com/ComputerVisionNews-2017August/#48).
 
-  More experiments are shown in [FM-Bench](https://jwbian.net/fm-bench).
-	
+  
 ## Usage
 
 Requirement:
@@ -44,26 +45,20 @@ Tune Parameters:
 		1.	#define USE_GPU" (need cudafeatures2d module) 
 				using cpu mode by commenting it.
 				
-		2.	For high-resolution images, we suggest using 100K features with setFastThreshod(5);
-		
-		3.	For low-resolution (like VGA) images, we suggest using 10K features with setFastThreshod(0);
+		2.	We suggest using SIFT features for accuracy, and using ORB features for speed.
+
 	
 	In gms_matcher.h
 				
 		2.	#define THRESH_FACTOR 6			
-				The higher, the less matches。
+				Set it higher for more input matches, and lower for the fewer input matches。
+				Often 6 for ORB raw matches, and 4 or 3 for SIFT matches (after ratio test).
 				
 		3. 	int GetInlierMask(vector<bool> &vbInliers, bool WithScale = false, bool WithRotation = false)
-				Set WithScale to be true for unordered image matching and false for video matching.
+				Set WithScale to be true for wide-baseline matching and false for video matching.
 				
 
-## If you use this work, please cite our paper
-	@inproceedings{bian2017gms,
- 	  title={GMS: Grid-based Motion Statistics for Fast, Ultra-robust Feature Correspondence},
-  	  author={JiaWang Bian and Wen-Yan Lin and Yasuyuki Matsushita and Sai-Kit Yeung and Tan Dat Nguyen and Ming-Ming Cheng},
-  	  booktitle={IEEE Conference on Computer Vision and Pattern Recognition},
-  	  year={2017}
-	}
+## If you find this work useful in your research, please consider citing our paper:
 	
 	@article{Bian2019gms,
   		title={{GMS}: Grid-based Motion Statistics for Fast, Ultra-Robust Feature Correspondence},
