@@ -10,6 +10,7 @@
 
 [JiaWang Bian](http://jwbian.net), Wen-Yan Lin, Yun Liu, Le Zhang, Sai-Kit Yeung, Ming-Ming Cheng, Ian Reid, **GMS: Grid-based Motion Statistics for Fast, Ultra-robust Feature Correspondence**, **IJCV 2019**, [[pdf](https://link.springer.com/content/pdf/10.1007%2Fs11263-019-01280-3.pdf)] 
 
+
 ## Other Resouces
 
   The method has been integrated into OpenCV library (see [xfeatures2d.matchGMS](https://docs.opencv.org/master/db/dd9/group__xfeatures2d__match.html)).
@@ -18,7 +19,17 @@
 
   The paper was selected and reviewed by [Computer Vision News](http://www.rsipvision.com/ComputerVisionNews-2017August/#48).
 
-  
+
+## If you find this work useful in your research, please consider citing our paper:
+	
+	@article{Bian2019gms,
+  		title={{GMS}: Grid-based Motion Statistics for Fast, Ultra-Robust Feature Correspondence},
+  		author={Bian, JiaWang and Lin, Wen-Yan and Liu, Yun and Zhang, Le and Yeung, Sai-Kit and Cheng, Ming-Ming and Reid, Ian},
+  		journal={International Journal of Computer Vision (IJCV)},
+  		year={2019}
+	}
+
+
 ## Usage
 
 Requirement:
@@ -58,14 +69,8 @@ Tune Parameters:
 				Set WithScale to be true for wide-baseline matching and false for video matching.
 				
 
-## If you find this work useful in your research, please consider citing our paper:
-	
-	@article{Bian2019gms,
-  		title={{GMS}: Grid-based Motion Statistics for Fast, Ultra-Robust Feature Correspondence},
-  		author={Bian, JiaWang and Lin, Wen-Yan and Liu, Yun and Zhang, Le and Yeung, Sai-Kit and Cheng, Ming-Ming and Reid, Ian},
-  		journal={International Journal of Computer Vision (IJCV)},
-  		year={2019}
-	}
+## Related projects
 
+ * [FM-Bench](https://github.com/JiawangBian/FM-Bench) (BMVC 2019, More evaluation details for GMS.)
 
 
