@@ -51,7 +51,7 @@ Tune Parameters:
 	In gms_matcher.h
 				
 		2.	#define THRESH_FACTOR 6			
-				Set it higher for more input matches, and lower for the fewer input matches。
+				Set it higher for more input matches, and lower for the fewer input matches.
 				Often 6 for ORB raw matches, and 4 or 3 for SIFT matches (after ratio test).
 				
 		3. 	int GetInlierMask(vector<bool> &vbInliers, bool WithScale = false, bool WithRotation = false)
