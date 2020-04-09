@@ -45,21 +45,19 @@ C++ Example:
 	See src/demo.cpp
 
 
-OpenCV C++ demo is [here](https://github.com/opencv/opencv_contrib/blob/master/modules/xfeatures2d/samples/gms_matcher.cpp)
-
-
 Python Example:
 	
 	Go to "python" folder. Run "python3 opencv_demo.py". 
 	(You need install opencv_contrib by "pip install opencv-contrib-python")
 	
 	
-Matlab Example
+Matlab Example:
 	
 	1. Go to "matlab" folder. Compile the code with OpenCV ('Compile.m'), and run 'demo.m'.
-	
 
-Mexopencv example is [here](http://amroamroamro.github.io/mexopencv/opencv_contrib/gms_matcher_img_demo.html)
+External Examples:
+
+[OpenCV C++ demo](https://github.com/opencv/opencv_contrib/blob/master/modules/xfeatures2d/samples/gms_matcher.cpp) and [Mexopencv example](http://amroamroamro.github.io/mexopencv/opencv_contrib/gms_matcher_img_demo.html)
 
 	
 Tuning Parameters:
