@@ -34,14 +34,19 @@
 
 Requirement:
 
-	1.OpenCV 3.0 or later (for IO and ORB features, necessary)
+	1.OpenCV 3.0 or later (for ORB features, necessary)
 
 	2.cudafeatures2d module(for gpu nearest neighbor, optional)
+	
+	3.OpenCV xfeatures2D moudle (if using the opencv built-in GMS function) 
 
 C++ Example:
 
-	See demo.cpp.
-	
+	See src/demo.cpp
+
+
+OpenCV C++ demo is [here](https://github.com/opencv/opencv_contrib/blob/master/modules/xfeatures2d/samples/gms_matcher.cpp)
+
 
 Python Example:
 	
@@ -51,12 +56,15 @@ Python Example:
 	
 Matlab Example
 	
-	Go to "matlab" folder. Compile the code with OpenCV ('Compile.m'), and run 'demo.m'.
+	1. Go to "matlab" folder. Compile the code with OpenCV ('Compile.m'), and run 'demo.m'.
+	
+
+Mexopencv example is [here](http://amroamroamro.github.io/mexopencv/opencv_contrib/gms_matcher_img_demo.html)
 
 	
-Tune Parameters:
+Tuning Parameters:
 
-	In demo.cpp
+	In src/demo.cpp
 		1.	#define USE_GPU" (need cudafeatures2d module) 
 				using cpu mode by commenting it.
 				
