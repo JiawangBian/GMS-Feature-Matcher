@@ -57,9 +57,9 @@ Matlab Example:
 
 External Examples:
 
-[OpenCV C++ demo](https://github.com/opencv/opencv_contrib/blob/master/modules/xfeatures2d/samples/gms_matcher.cpp) and [Mexopencv example](http://amroamroamro.github.io/mexopencv/opencv_contrib/gms_matcher_img_demo.html)
+   [OpenCV C++ demo](https://github.com/opencv/opencv_contrib/blob/master/modules/xfeatures2d/samples/gms_matcher.cpp) and [Mexopencv example](http://amroamroamro.github.io/mexopencv/opencv_contrib/gms_matcher_img_demo.html)
 
-	
+
 Tuning Parameters:
 
 	In src/demo.cpp
