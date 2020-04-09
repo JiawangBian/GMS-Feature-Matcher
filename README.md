@@ -42,13 +42,17 @@ C++ Example:
 
 	See demo.cpp.
 	
+
+Python Example:
+	
+	Go to "python" folder. Run "python3 opencv_demo.py". 
+	(You need install opencv_contrib by "pip install opencv-contrib-python")
+	
+	
 Matlab Example
 	
 	Go to "matlab" folder. Compile the code with OpenCV ('Compile.m'), and run 'demo.m'.
 
-Python Example:
-	
-	Go to "python" folder. Run "python3 gms_matcher.py".
 	
 Tune Parameters:
 
