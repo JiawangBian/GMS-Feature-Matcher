@@ -8,7 +8,7 @@
 
 [JiaWang Bian](http://jwbian.net), Wen-Yan Lin, Yasuyuki Matsushita, Sai-Kit Yeung, Tan Dat Nguyen, Ming-Ming Cheng, **GMS: Grid-based Motion Statistics for Fast, Ultra-robust Feature Correspondence**, **CVPR 2017**, [[Project Page](http://jwbian.net/gms)] [[pdf](http://jwbian.net/Papers/GMS_CVPR17.pdf)] [[Bib](http://jwbian.net/Papers/bian2017gms.txt)] [[Code](https://github.com/JiawangBian/GMS-Feature-Matcher)] [[Youtube](https://youtu.be/3SlBqspLbxI)]
 
-[JiaWang Bian](http://jwbian.net), Wen-Yan Lin, Yun Liu, Le Zhang, Sai-Kit Yeung, Ming-Ming Cheng, Ian Reid, **GMS: Grid-based Motion Statistics for Fast, Ultra-robust Feature Correspondence**, **IJCV 2019**, [[pdf](https://link.springer.com/content/pdf/10.1007%2Fs11263-019-01280-3.pdf)] 
+[JiaWang Bian](http://jwbian.net), Wen-Yan Lin, Yun Liu, Le Zhang, Sai-Kit Yeung, Ming-Ming Cheng, Ian Reid, **GMS: Grid-based Motion Statistics for Fast, Ultra-robust Feature Correspondence**, **IJCV 2020**, [[pdf](https://link.springer.com/content/pdf/10.1007%2Fs11263-019-01280-3.pdf)] 
 
 
 ## Other Resouces
@@ -22,11 +22,11 @@
 
 ## If you find this work useful in your research, please consider citing our paper:
 	
-	@article{Bian2019gms,
+	@article{Bian2020gms,
   		title={{GMS}: Grid-based Motion Statistics for Fast, Ultra-Robust Feature Correspondence},
   		author={Bian, JiaWang and Lin, Wen-Yan and Liu, Yun and Zhang, Le and Yeung, Sai-Kit and Cheng, Ming-Ming and Reid, Ian},
   		journal={International Journal of Computer Vision (IJCV)},
-  		year={2019}
+  		year={2020}
 	}
 
 
